@@ -4,6 +4,7 @@ import { connectDB } from "./config/db";
 import { dev } from "./config";
 import createHttpError from "http-errors";
 import { errorHandler } from "./middlewares/errorHandler";
+import categoriesRouter from "./routers/categoryRoute";
 
 
 
@@ -26,7 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // app.use("/products", productsRouter);
 // app.use("/users", usersRouter);
-// app.use("/categories", categoriesRouter);
+app.use("/categories", categoriesRouter);
 // app.use("/orders", ordersRouter);
 
 app.use((req, res, next) => {

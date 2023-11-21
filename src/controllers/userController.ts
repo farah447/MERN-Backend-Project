@@ -9,10 +9,25 @@ export const getAllUsers = async (
     next: NextFunction
 )=>{
     try{
-    const users: IUser [] = await Users.find()
+
+    let page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 3;
+
+    const count = await Users.countDocuments();
+    const totalPages = Math.ceil(count / limit);
+
+    if (page > totalPages){
+        page = totalPages;
+    }
+    const skip = (page-1) * limit;
+    const users = await Users.find().skip(skip).limit(limit);
     res.status(200).send({
         message: 'all users are returend',
-        payload: users
+        payload:{ 
+            users,
+            currentPage: page,
+            totalPages,
+        }
     });
 } catch (error) {
     next(error)

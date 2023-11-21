@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from 'express'
-import ApiError from '../errors/ApiError'
+import { NextFunction, Request, Response } from "express";
+import { HttpError } from "http-errors";
 
-const apiErrorHandler = (err: typeof ApiError, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof ApiError) {
-    res.status(err.code).json({ msg: err.message })
-    return
-  }
-
-  res.status(500).json({ msg: 'Something went wrong.' })
-}
-
-export default apiErrorHandler
+export const errorHandler = (
+  error: HttpError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  res.status(error.statusCode || 500).json({
+    message: error.message,
+  });
+};

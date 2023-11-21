@@ -1,37 +1,35 @@
-import express from 'express'
-import mongoose from 'mongoose'
-import { config } from 'dotenv'
+import express, { Application, Request, Response } from "express";
 
-import usersRouter from './routers/users'
-import productsRouter from './routers/products'
-import ordersRouter from './routers/orders'
-import apiErrorHandler from './middlewares/errorHandler'
-import myLogger from './middlewares/logger'
+import { connectDB } from "./config/db";
+import { dev } from "./config";
+import createHttpError from "http-errors";
+import { errorHandler } from "./middlewares/errorHandler";
 
-config()
-const app = express()
-const PORT = 5050
-const URL = process.env.ATLAS_URL as string
 
-app.use(myLogger)
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
 
-app.use('/api/users', usersRouter)
-app.use('/api/orders', ordersRouter)
-app.use('/api/products', productsRouter)
 
-app.use(apiErrorHandler)
+const app: Application = express();
 
-mongoose
-  .connect(URL)
-  .then(() => {
-    console.log('Database connected')
-  })
-  .catch((err) => {
-    console.log('MongoDB connection error, ', err)
-  })
+const port: number = dev.app.port || 3003;
 
-app.listen(PORT, () => {
-  console.log('Server running http://localhost:' + PORT)
-})
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+  connectDB();
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/", (req: Request, res: Response) => {
+  res.json({ message: "Health checkup" });
+});
+
+// app.use("/products", productsRouter);
+// app.use("/users", usersRouter);
+// app.use("/categories", categoriesRouter);
+// app.use("/orders", ordersRouter);
+
+app.use((req, res, next) => {
+  next(createHttpError(404, "Route Not Found"));
+});
+app.use(errorHandler);

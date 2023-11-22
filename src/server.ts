@@ -1,10 +1,10 @@
 import express, { Application, Request, Response } from 'express'
 import createHttpError from 'http-errors'
-
 import { connectDB } from "./config/db";
 import { dev } from "./config";
-import createHttpError from "http-errors";
 import { errorHandler } from "./middlewares/errorHandler";
+import ordersRouter from './routers/orderRoute';
+import categoriesRouter from './routers/categoryRoute';
 
 
 
@@ -27,10 +27,8 @@ app.get('/', (req: Request, res: Response) => {
 
 // app.use("/products", productsRouter);
 // app.use("/users", usersRouter);
-// app.use("/categories", categoriesRouter);
 app.use('/orders', ordersRouter)
 app.use("/categories", categoriesRouter);
-// app.use("/orders", ordersRouter);
 
 app.use((req, res, next) => {
   next(createHttpError(404, 'Route Not Found'))

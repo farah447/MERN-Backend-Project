@@ -2,11 +2,10 @@ import { Router } from "express";
 
 import {
     createSingleProduct,
+    deleteProductBySlug,
     getAllProducts,
     getProductsBySlug,
-    deleteProductBySlug,
     updateProductBySlug,
-    //getSingleProduct
 } from "../controllers/productController";
 import { upload } from "../middlewares/uploadFile";
 

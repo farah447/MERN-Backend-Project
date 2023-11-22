@@ -1,11 +1,11 @@
 import express, { Application, Request, Response } from "express";
 
-import { connectDB } from "./config/db";
 import { dev } from "./config";
+import { connectDB } from "./config/db";
 
 import { errorHandler } from "./middlewares/errorHandler";
-import { createHttpError } from "./util/createHTTPError";
 import productRoute from "./routers/productRoute";
+import { createHttpError } from "./util/createHTTPError";
 
 const app: Application = express();
 

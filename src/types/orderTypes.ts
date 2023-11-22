@@ -1,9 +1,10 @@
-export interface IOrder {
-  _id: string
-  productId: number
-  userId: number
-  createdAt: Date
-  updatedAt: Date
-}
+import { Document } from 'mongoose'
 
-export type OrderInput = Omit<IOrder, '_id' | 'createdAt' | 'updatedAt'>
+export interface IOrder extends Document {
+  _id: string
+  productId: string // IProduct['_id']
+  userId: string // IUser['_id']
+  createdAt?: Date
+  updatedAt?: Date
+  __v: number
+}

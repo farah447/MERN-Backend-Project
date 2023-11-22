@@ -1,17 +1,18 @@
 import { Schema, model } from 'mongoose'
+import { IOrder } from '../types/orderTypes'
 
 const orderSchema = new Schema(
   {
     productId: {
-      type: Number,
+      type: String, // type: Schema.Types.ObjectId, ref: 'Product' (Relation with product schema will be be here)
       required: true,
-    }, // Relation with product schema will be be here
+    },
     userId: {
-      type: Number,
+      type: String, // type: Schema.Types.ObjectId, ref: 'User' (Relation with user schema will be be here)
       required: true,
-    }, // Relation with user schema will be be here
+    },
   },
   { timestamps: true }
 )
 
-export const Order = model('Orders', orderSchema)
+export const Order = model<IOrder>('Orders', orderSchema)

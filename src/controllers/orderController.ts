@@ -2,12 +2,12 @@ import { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 
 import { Order } from '../models/orderSchema'
-import { OrderInput } from '../types/orderTypes'
+import { IOrder } from '../types/orderTypes'
 
 // GET : /orders => get all orders & pagination
 export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const existingOrders = await Order.find()
+    const existingOrders: IOrder[] = await Order.find()
 
     if (existingOrders.length === 0) {
       throw createHttpError(404, 'There are no orders in database')
@@ -46,12 +46,12 @@ export const createNewOrder = async (req: Request, res: Response, next: NextFunc
   try {
     const { productId, userId } = req.body
 
-    const newOrder: OrderInput = {
+    const newOrder: IOrder = new Order({
       productId,
       userId,
-    }
+    })
 
-    await new Order(newOrder).save()
+    await newOrder.save()
     res.status(201).json({
       message: 'New order created',
       payload: newOrder,
@@ -79,7 +79,7 @@ export const deleteOrderById = async (req: Request, res: Response, next: NextFun
   }
 }
 
-// PUT : /orders/ => update a new order
+// PUT : /orders/ => update an order by id
 export const updateOrderbyId = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id

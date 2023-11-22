@@ -6,7 +6,7 @@ import {
     getProductsBySlug,
     deleteProductBySlug,
     updateProductBySlug,
-    getSingleProduct
+    //getSingleProduct
 } from "../controllers/productController";
 import { upload } from "../middlewares/uploadFile";
 
@@ -16,7 +16,7 @@ router.get("/", getAllProducts);
 
 router.get("/:slug", getProductsBySlug);
 
-router.get("/", getSingleProduct);
+//router.get("/:id", getSingleProduct);
 
 router.post("/", upload.single('image'), createSingleProduct);
 

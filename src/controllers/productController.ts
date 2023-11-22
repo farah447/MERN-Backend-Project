@@ -15,7 +15,7 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
     }
 };
 
-export const getSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
+/*export const getSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = req.params.id;
         const product = await Products.findById({ _id: id });
@@ -29,7 +29,7 @@ export const getSingleProduct = async (req: Request, res: Response, next: NextFu
     } catch (error) {
         next(error);
     }
-};
+};*/
 
 export const getProductsBySlug = async (req: Request, res: Response, next: NextFunction) => {
     try {

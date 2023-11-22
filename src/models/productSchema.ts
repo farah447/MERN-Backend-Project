@@ -47,7 +47,7 @@ const productSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        minlingth: [3, "must be at leaset 3 characters long"],
+        minlingth: [3, "Description must be at least 3 characters long"],
     },
     quantity: {
         type: Number,

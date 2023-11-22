@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Users } from "../models/userSchema";
-import { IUser, UserInput } from "../types/types";
+import { IUser, UserInput } from "../types/userTypes";
 
 
 export const getAllUsers = async (

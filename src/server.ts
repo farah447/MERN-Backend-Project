@@ -1,5 +1,4 @@
 import express, { Application, Request, Response } from 'express'
-import createHttpError from 'http-errors'
 import { connectDB } from "./config/db";
 import { dev } from "./config";
 import { errorHandler } from "./middlewares/errorHandler";

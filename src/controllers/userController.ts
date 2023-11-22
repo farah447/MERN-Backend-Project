@@ -31,8 +31,7 @@ export const getAllUsers = async (
     });
 } catch (error) {
     next(error)
-}
-};
+}};
 
 export const getSingleUser = async (
     req: Request, 

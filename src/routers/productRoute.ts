@@ -14,9 +14,9 @@ const router = Router();
 
 router.get("/", getAllProducts);
 
-router.get("/", getProductsBySlug);
+router.get("/:slug", getProductsBySlug);
 
-router.get("/:slug", getSingleProduct);
+router.get("/", getSingleProduct);
 
 router.post("/", upload.single('image'), createSingleProduct);
 

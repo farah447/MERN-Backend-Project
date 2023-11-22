@@ -1,13 +1,13 @@
 import express, { Application, Request, Response } from 'express'
-import { connectDB } from './config/db'
-import { dev } from './config'
+import { connectDB } from "./config/db";
+import { dev } from "./config";
 
-import { errorHandler } from './middlewares/errorHandler'
-import ordersRouter from './routers/orderRoute'
-import categoriesRouter from './routers/categoryRoute'
+import { errorHandler } from "./middlewares/errorHandler";
+import ordersRouter from './routers/orderRoute';
+import categoriesRouter from './routers/categoryRoute';
 import usersRouter from './routers/userRoute'
-import { createHttpError } from './util/createHTTPError'
-import productRoute from './routers/productRoute'
+import { createHttpError } from "./util/createHTTPError";
+import productRoute from "./routers/productRoute";
 
 const app: Application = express()
 
@@ -25,10 +25,12 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Health checkup' })
 })
 
-app.use('/products', productRoute)
+
+app.use("/products", productRoute);
 app.use('/orders', ordersRouter)
-app.use('/categories', categoriesRouter)
-app.use('/users', usersRouter)
+app.use("/categories", categoriesRouter);
+app.use("/users", usersRouter);
+
 
 app.use((req, res, next) => {
   next(createHttpError(404, 'Route Not Found'))

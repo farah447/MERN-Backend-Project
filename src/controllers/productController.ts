@@ -8,8 +8,25 @@ import { findProductBySlug, removeProductBySlug } from "../services/productServi
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         //limit and page number
-        const products = await Products.find();
-        res.json({ message: 'all products are returned', payload: products });
+    let page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 3;
+
+    const count = await Products.countDocuments();
+    const totalPages = Math.ceil(count / limit);
+
+    if (page > totalPages){
+        page = totalPages;
+    }
+    const skip = (page-1) * limit;
+        const products = await Products.find().skip(skip).limit(limit);
+        res.json({ 
+            message: 'all products are returned', 
+            payload: {
+                products, 
+                currentPage: page,
+                totalPages,
+            }
+             });
     } catch (error) {
         next(error);
     }

@@ -11,11 +11,6 @@ const app: Application = express();
 
 const port: number = dev.app.port || 3003;
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-  connectDB();
-});
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -31,4 +26,10 @@ app.use("/products", productRoute);
 app.use((req, res, next) => {
   next(createHttpError(404, "Route Not Found"));
 });
+
 app.use(errorHandler);
+
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+  connectDB();
+});

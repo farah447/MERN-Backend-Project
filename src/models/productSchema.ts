@@ -11,8 +11,8 @@ export interface IProduct extends Document {
     //category: ICategory['_id'];
     sold: number;
     shipping: number;
-    createdAt?: NativeDate;
-    updatedAt?: NativeDate;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 const productSchema = new Schema({
@@ -21,8 +21,8 @@ const productSchema = new Schema({
         required: true,
         unique: true,
         trim: true,
-        minlingth: [3, "Product title must be at least 3 characters long"],
-        maxlingth: [300, "Product title must be at most 300 characters"],
+        minlength: [3, "Product title must be at least 3 characters long"],
+        maxlength: [300, "Product title must be at most 300 characters"],
     },
     slug: {
         type: String,
@@ -61,7 +61,7 @@ const productSchema = new Schema({
     },
     shipping: {
         type: Number,
-        defult: 0,
+        default: 0,
     },
 },
     { timestamps: true }

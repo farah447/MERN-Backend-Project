@@ -3,10 +3,10 @@ import { Router } from "express";
 import {
     createSingleProduct,
     getAllProducts,
-    //getSingleProduct,
     getProductsBySlug,
     deleteProductBySlug,
-    updateProductBySlug
+    updateProductBySlug,
+    getSingleProduct
 } from "../controllers/productController";
 import { upload } from "../middlewares/uploadFile";
 
@@ -16,7 +16,7 @@ router.get("/", getAllProducts);
 
 router.get("/", getProductsBySlug);
 
-//router.get("/:slug", getSingleProduct);
+router.get("/:slug", getSingleProduct);
 
 router.post("/", upload.single('image'), createSingleProduct);
 

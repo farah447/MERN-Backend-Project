@@ -2,11 +2,10 @@ import express, { Application, Request, Response } from "express";
 
 import { connectDB } from "./config/db";
 import { dev } from "./config";
-import createHttpError from "http-errors";
+
 import { errorHandler } from "./middlewares/errorHandler";
-
-
-
+import { createHttpError } from "./util/createHTTPError";
+import productRoute from "./routers/productRoute";
 
 const app: Application = express();
 
@@ -24,7 +23,7 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Health checkup" });
 });
 
-// app.use("/products", productsRouter);
+app.use("/products", productRoute);
 // app.use("/users", usersRouter);
 // app.use("/categories", categoriesRouter);
 // app.use("/orders", ordersRouter);

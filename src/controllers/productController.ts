@@ -1,18 +1,19 @@
-import { Request, Response, NextFunction } from "express";
-import slugify from 'slugify';
+import { Request, Response, NextFunction } from 'express'
+import slugify from 'slugify'
 
-import { IProduct, Products } from "../models/productSchema";
-import { createHttpError } from "../util/createHTTPError";
-import { findProductBySlug, removeProductBySlug } from "../services/productServices";
+import { IProduct, Products } from '../models/productSchema'
+import { createHttpError } from '../util/createHTTPError'
+import { findProductBySlug, removeProductBySlug } from '../services/productServices'
+import { Document, Error } from 'mongoose'
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        //limit and page number
-    let page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 3;
+  try {
+    //limit and page number
+    let page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 3
 
-    const count = await Products.countDocuments();
-    const totalPages = Math.ceil(count / limit);
+    const count = await Products.countDocuments()
+    const totalPages = Math.ceil(count / limit)
 
     if (page > totalPages){
         page = totalPages;
@@ -57,70 +58,91 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
 };*/
 
 export const getProductsBySlug = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const products = await findProductBySlug(req.params.slug);
+  try {
+    const products = await findProductBySlug(req.params.slug)
 
-        res.json({ message: 'return a single product', payload: products })
-    } catch (error) {
-        next(error);
-    }
+    res.json({ message: 'return a single product', payload: products })
+  } catch (error) {
+    next(error)
+  }
 }
 
 export const createSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id, title, price, description, category, quantity, sold, shipping } = req.body;
+  try {
+    const { id, title, price, description, category, quantity, sold, shipping } = req.body
 
-        const productExsist = await Products.exists({ title: title });
-        if (productExsist) {
-            throw new Error("Product is not exist with this title");
-        };
-        const product: IProduct = new Products({
-            _id: id,
-            title: title,
-            price: price,
-            slug: slugify(title),
-            description: description,
-            quantity: quantity,
-            category: category,
-            sold: sold,
-            shipping: shipping
-        });
-        await product.save();
-        res.status(201).json({
-            message: 'single product created',
-        });
-    } catch (error) {
-        next(error);
+    const productExsist = await Products.exists({ title: title })
+    if (productExsist) {
+      throw new Error('Product is not exist with this title')
     }
-};
+    const product: IProduct = new Products({
+      _id: id,
+      title: title,
+      price: price,
+      slug: slugify(title),
+      description: description,
+      quantity: quantity,
+      category: category,
+      sold: sold,
+      shipping: shipping,
+    })
+    await product.save()
+    res.status(201).json({
+      message: 'single product created',
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 export const deleteProductBySlug = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const product = await removeProductBySlug(req.params.slug);
-        res.json({
-            message: 'deleted single product',
-            payload: product,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+  try {
+    const product = await removeProductBySlug(req.params.slug)
+    res.json({
+      message: 'deleted single product',
+      payload: product,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 export const updateProductBySlug = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        if (req.body.title) {
-            req.body.slug = slugify(req.body.title);
-        }
-        const product = await Products.findOneAndUpdate({ slug: req.params.slug }, req.body, { new: true });
-        if (!product) {
-            const error = createHttpError(404, 'Product not found with this slug');
-            throw error;
-        }
-        res.json({
-            message: 'update a single product',
-            payload: product,
-        });
-    } catch (error) {
-        next(error);
+  try {
+    if (req.body.title) {
+      req.body.slug = slugify(req.body.title)
     }
-};
+    const product = await Products.findOneAndUpdate({ slug: req.params.slug }, req.body, {
+      new: true,
+    })
+    if (!product) {
+      const error = createHttpError(404, 'Product not found with this slug')
+      throw error
+    }
+    res.json({
+      message: 'update a single product',
+      payload: product,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// GET : /products/:title => search products by title
+export const searchProductsByTitle = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const title = req.params.title
+    const products = await Products.find({ title: { $regex: title, $options: 'i' } })
+
+    if (products.length === 0) {
+      throw createHttpError(404, `Product not found with this title: ${title}`)
+    }
+
+    res.status(200).json({
+      message: 'Products returned',
+      payload: products,
+    })
+  } catch (error) {
+    next(error)
+  }
+}

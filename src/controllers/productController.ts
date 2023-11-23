@@ -16,9 +16,17 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
 
     if (page > totalPages){
         page = totalPages;
+
+        
     }
+
+    let minPrice=Number(req.query.minPrice)||0
+    let maxPrice=Number(req.query.maxPrice)||50000
+
+
+
     const skip = (page-1) * limit;
-        const products = await Products.find().skip(skip).limit(limit);
+        const products = await Products.find({$and: [{price:{$gt:minPrice}}, {price:{$lt:maxPrice}}]}).skip(skip).limit(limit);
         res.json({ 
             message: 'all products are returned', 
             payload: {

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
+
 import { Users } from "../models/userSchema";
-import { IUser, UserInput } from "../types/userTypes";
+import { UserInput } from "../types/userTypes";
 
 
 export const getAllUsers = async (
@@ -31,8 +32,7 @@ export const getAllUsers = async (
     });
 } catch (error) {
     next(error)
-}
-};
+}};
 
 export const getSingleUser = async (
     req: Request, 

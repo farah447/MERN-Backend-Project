@@ -15,23 +15,31 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
     const count = await Products.countDocuments()
     const totalPages = Math.ceil(count / limit)
 
-    if (page > totalPages) {
-      page = totalPages
+    if (page > totalPages){
+        page = totalPages;
+
+        
     }
-    const skip = (page - 1) * limit
-    const products = await Products.find().skip(skip).limit(limit)
-    res.json({
-      message: 'all products are returned',
-      payload: {
-        products,
-        currentPage: page,
-        totalPages,
-      },
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+
+    let minPrice=Number(req.query.minPrice)||0
+    let maxPrice=Number(req.query.maxPrice)||50000
+
+
+
+    const skip = (page-1) * limit;
+        const products = await Products.find({$and: [{price:{$gt:minPrice}}, {price:{$lt:maxPrice}}]}).skip(skip).limit(limit);
+        res.json({ 
+            message: 'all products are returned', 
+            payload: {
+                products, 
+                currentPage: page,
+                totalPages,
+            }
+             });
+    } catch (error) {
+        next(error);
+    }
+};
 
 /*export const getSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,18 +1,23 @@
-import { Router } from "express";
-import {  createCategories, deleteCategories, getCategories, getCategoryBySlug, updateCategory} from "../controllers/categoryController";
+import { Router } from 'express'
 
-const router =Router()
+import {
+  createCategories,
+  deleteCategories,
+  getCategories,
+  getCategoryBySlug,
+  updateCategory,
+} from '../controllers/categoryController'
 
-router.get('/',getCategories)
+const router = Router()
 
-router.post('/',createCategories)
+router.get('/', getCategories)
 
-router.put('/:slug',updateCategory)
+router.post('/', createCategories)
 
-router.delete('/:slug',deleteCategories)
+router.put('/:slug', updateCategory)
 
-router.get('/:slug',getCategoryBySlug)
+router.delete('/:slug', deleteCategories)
 
-
+router.get('/:slug', getCategoryBySlug)
 
 export default router

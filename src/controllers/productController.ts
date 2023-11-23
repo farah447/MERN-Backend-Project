@@ -1,67 +1,51 @@
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import slugify from 'slugify'
+import { Error } from 'mongoose'
 
-import { IProduct, Products } from '../models/productSchema'
-import { createHttpError } from '../util/createHTTPError'
+import { Products } from '../models/productSchema'
 import { findProductBySlug, removeProductBySlug } from '../services/productServices'
-import { Document, Error } from 'mongoose'
+import { IProduct } from '../types/productTypes'
+import { createHttpError } from '../util/createHTTPError'
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    //limit and page number
     let page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || 3
 
     const count = await Products.countDocuments()
     const totalPages = Math.ceil(count / limit)
 
-    if (page > totalPages){
-        page = totalPages;
-
-        
+    if (page > totalPages) {
+      page = totalPages
     }
 
-    let minPrice=Number(req.query.minPrice)||0
-    let maxPrice=Number(req.query.maxPrice)||50000
+    let minPrice = Number(req.query.minPrice) || 0
+    let maxPrice = Number(req.query.maxPrice) || 50000
 
-
-
-    const skip = (page-1) * limit;
-        const products = await Products.find({$and: [{price:{$gt:minPrice}}, {price:{$lt:maxPrice}}]}).skip(skip).limit(limit);
-        res.json({ 
-            message: 'all products are returned', 
-            payload: {
-                products, 
-                currentPage: page,
-                totalPages,
-            }
-             });
-    } catch (error) {
-        next(error);
-    }
-};
-
-/*export const getSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const id = req.params.id;
-        const product = await Products.findById({ _id: id });
-        if (!product) {
-            throw new Error("Product is not found with this id");
-        }
-        res.json({
-            message: 'return single product',
-            payload: product,
-        });
-    } catch (error) {
-        next(error);
-    }
-};*/
+    const skip = (page - 1) * limit
+    const products = await Products.find({
+      $and: [{ price: { $gt: minPrice } }, { price: { $lt: maxPrice } }],
+    })
+      .skip(skip)
+      .limit(limit)
+    res.json({
+      message: 'All products are returned',
+      payload: {
+        products,
+        currentPage: page,
+        totalPages,
+      },
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 export const getProductsBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const products = await findProductBySlug(req.params.slug)
 
-    res.json({ message: 'return a single product', payload: products })
+    res.json({ message: 'Return a single product', payload: products })
   } catch (error) {
     next(error)
   }
@@ -88,7 +72,7 @@ export const createSingleProduct = async (req: Request, res: Response, next: Nex
     })
     await product.save()
     res.status(201).json({
-      message: 'single product created',
+      message: 'Single product created',
     })
   } catch (error) {
     next(error)
@@ -99,7 +83,7 @@ export const deleteProductBySlug = async (req: Request, res: Response, next: Nex
   try {
     const product = await removeProductBySlug(req.params.slug)
     res.json({
-      message: 'deleted single product',
+      message: 'Deleted single product',
       payload: product,
     })
   } catch (error) {
@@ -120,7 +104,7 @@ export const updateProductBySlug = async (req: Request, res: Response, next: Nex
       throw error
     }
     res.json({
-      message: 'update a single product',
+      message: 'Update a single product',
       payload: product,
     })
   } catch (error) {
@@ -128,7 +112,6 @@ export const updateProductBySlug = async (req: Request, res: Response, next: Nex
   }
 }
 
-// GET : /products/:title => search products by title
 export const searchProductsByTitle = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const title = req.params.title

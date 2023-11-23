@@ -4,20 +4,19 @@ import createHttpError from 'http-errors'
 import { Order } from '../models/orderSchema'
 import { IOrder } from '../types/orderTypes'
 
-// GET : /orders => get all orders & pagination
 export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    let page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 3;
+    let page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || 3
 
-    const count = await Order.countDocuments();
-    const totalPages = Math.ceil(count / limit);
+    const count = await Order.countDocuments()
+    const totalPages = Math.ceil(count / limit)
 
-    if (page > totalPages){
-        page = totalPages;
+    if (page > totalPages) {
+      page = totalPages
     }
-    const skip = (page-1) * limit;
-    const existingOrders: IOrder[] = await Order.find().skip(skip).limit(limit);
+    const skip = (page - 1) * limit
+    const existingOrders: IOrder[] = await Order.find().skip(skip).limit(limit)
 
     if (existingOrders.length === 0) {
       throw createHttpError(404, 'There are no orders in database')
@@ -29,14 +28,13 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
         existingOrders,
         currentPage: page,
         totalPages,
-      }
+      },
     })
   } catch (error) {
     next(error)
   }
 }
 
-// GET : /orders/:id => get single order by id
 export const getSingleOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
@@ -55,7 +53,6 @@ export const getSingleOrderById = async (req: Request, res: Response, next: Next
   }
 }
 
-// POST : /orders/ => create a new order
 export const createNewOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { productId, userId } = req.body
@@ -68,14 +65,12 @@ export const createNewOrder = async (req: Request, res: Response, next: NextFunc
     await newOrder.save()
     res.status(201).json({
       message: 'New order created',
-      payload: newOrder,
     })
   } catch (error) {
     next(error)
   }
 }
 
-// DELETE : /orders/:id => delete single order by id
 export const deleteOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
@@ -93,7 +88,6 @@ export const deleteOrderById = async (req: Request, res: Response, next: NextFun
   }
 }
 
-// PUT : /orders/ => update an order by id
 export const updateOrderbyId = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id

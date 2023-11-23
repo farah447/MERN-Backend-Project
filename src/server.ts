@@ -1,13 +1,13 @@
 import express, { Application, Request, Response } from 'express'
-import { connectDB } from './config/db'
-import { dev } from './config'
 
+import { dev } from './config'
+import { connectDB } from './config/db'
 import { errorHandler } from './middlewares/errorHandler'
-import ordersRouter from './routers/orderRoute'
 import categoriesRouter from './routers/categoryRoute'
+import ordersRouter from './routers/orderRoute'
+import productRoute from './routers/productRoute'
 import usersRouter from './routers/userRoute'
 import { createHttpError } from './util/createHTTPError'
-import productRoute from './routers/productRoute'
 
 const app: Application = express()
 

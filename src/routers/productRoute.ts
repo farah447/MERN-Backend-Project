@@ -18,8 +18,6 @@ router.get('/:slug', getProductsBySlug)
 
 router.get('/search/:title', searchProductsByTitle)
 
-//router.get("/:id", getSingleProduct);
-
 router.post('/', upload.single('image'), createSingleProduct)
 
 router.delete('/:slug', deleteProductBySlug)

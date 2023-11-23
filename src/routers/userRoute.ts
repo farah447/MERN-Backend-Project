@@ -1,22 +1,23 @@
-import { Router } from "express";
-import { 
-    createSingleUser, 
-    deleteSingleUser, 
-    getAllUsers, 
-    getSingleUser, 
-    updateSingleUser
-} from "../controllers/userController";
+import { Router } from 'express'
 
-const router = Router();
+import {
+  createSingleUser,
+  deleteSingleUser,
+  getAllUsers,
+  getSingleUser,
+  updateSingleUser,
+} from '../controllers/userController'
 
-router.get('/', getAllUsers);
+const router = Router()
 
-router.get('/:userName', getSingleUser);
+router.get('/', getAllUsers)
 
-router.post('/', createSingleUser);
+router.get('/:userName', getSingleUser)
 
-router.delete('/:userName', deleteSingleUser);
+router.post('/', createSingleUser)
 
-router.put('/:userName', updateSingleUser);
+router.delete('/:userName', deleteSingleUser)
 
-export default router;
+router.put('/:userName', updateSingleUser)
+
+export default router

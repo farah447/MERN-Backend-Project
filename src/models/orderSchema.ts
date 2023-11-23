@@ -6,12 +6,12 @@ const orderSchema = new Schema(
   {
     productId: {
       type: Schema.Types.ObjectId,
-      ref: 'Product',
+      ref: 'Products',
       required: true,
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Users',
       required: true,
     },
   },

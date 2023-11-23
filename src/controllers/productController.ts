@@ -115,7 +115,7 @@ export const updateProductBySlug = async (req: Request, res: Response, next: Nex
 export const searchProductsByTitle = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const title = req.params.title
-    const products = await Products.find({ title: { $regex: title, $options: 'i' } })
+    const products = await Products.find({ title: { $regex: title, $options: 'i' } }) // i => case-insensitive
 
     if (products.length === 0) {
       throw createHttpError(404, `Product not found with this title: ${title}`)

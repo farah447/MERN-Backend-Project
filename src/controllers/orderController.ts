@@ -3,6 +3,8 @@ import createHttpError from 'http-errors'
 
 import { Order } from '../models/orderSchema'
 import { IOrder } from '../types/orderTypes'
+import { Products } from '../models/productSchema'
+import { Users } from '../models/userSchema'
 
 export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,7 +18,11 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
       page = totalPages
     }
     const skip = (page - 1) * limit
-    const existingOrders: IOrder[] = await Order.find().skip(skip).limit(limit)
+    const existingOrders: IOrder[] = await Order.find()
+      .populate('productId')
+      .populate('userId')
+      .skip(skip)
+      .limit(limit)
 
     if (existingOrders.length === 0) {
       throw createHttpError(404, 'There are no orders in database')
@@ -38,7 +44,7 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
 export const getSingleOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
-    const order = await Order.find({ _id: id })
+    const order = await Order.find({ _id: id }).populate('productId').populate('userId')
 
     if (order.length === 0) {
       throw createHttpError(404, `Order not found with this id: ${id}`)
@@ -56,6 +62,16 @@ export const getSingleOrderById = async (req: Request, res: Response, next: Next
 export const createNewOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { productId, userId } = req.body
+
+    const productExsist = await Products.exists({ _id: productId })
+    const userExsist = await Users.exists({ _id: userId })
+
+    if (!productExsist) {
+      throw createHttpError(404, `Product not found with this id: ${productId}`)
+    }
+    if (!userExsist) {
+      throw createHttpError(404, `User not found with this id: ${userId}`)
+    }
 
     const newOrder: IOrder = new Order({
       productId,
@@ -91,11 +107,22 @@ export const deleteOrderById = async (req: Request, res: Response, next: NextFun
 export const updateOrderbyId = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
+    const { productId, userId } = req.body
+
+    const productExsist = await Products.exists({ _id: productId })
+    const userExsist = await Users.exists({ _id: userId })
+
+    if (!productExsist) {
+      throw createHttpError(404, `Product not found with this id: ${productId}`)
+    }
+    if (!userExsist) {
+      throw createHttpError(404, `User not found with this id: ${userId}`)
+    }
 
     const updatedOrder = await Order.findOneAndUpdate({ _id: id }, req.body, { new: true })
 
     if (!updatedOrder) {
-      throw createHttpError(404, `Product not found with this id: ${id}`)
+      throw createHttpError(404, `Order not found with this id: ${id}`)
     }
 
     res.send({

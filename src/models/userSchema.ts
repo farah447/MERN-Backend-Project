@@ -3,7 +3,7 @@ import bcrybt from 'bcrypt';
 
 import { IUser } from "../types/userTypes";
 
-const usersSchema = new Schema ({
+const usersSchema = new Schema({
     // id: Number,
     firstName: {
         type: String,
@@ -31,7 +31,7 @@ const usersSchema = new Schema ({
         unique: true,
         lowercase: true,
         validate: {
-            validator: function (value: string){
+            validator: function (value: string) {
                 return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
             }
         }
@@ -49,7 +49,7 @@ const usersSchema = new Schema ({
         default: false,
     },
 },
-{ timestamps: true }
+    { timestamps: true }
 )
 
 export const Users = model<IUser>('Users', usersSchema);

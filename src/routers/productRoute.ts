@@ -1,14 +1,16 @@
 import { Router } from 'express'
 
 import {
-  createSingleProduct,
-  deleteProductBySlug,
-  getAllProducts,
-  getProductsBySlug,
-  searchProductsByTitle,
-  updateProductBySlug,
+    createSingleProduct,
+    deleteProductBySlug,
+    getAllProducts,
+    getProductsBySlug,
+    searchProductsByTitle,
+    updateProductBySlug,
 } from '../controllers/productController'
 import { upload } from '../middlewares/uploadFile'
+import { validateCreateProduct, validateUpdateProduct } from '../validation/productValidation'
+import { runValidation } from '../validation'
 
 const router = Router()
 
@@ -18,10 +20,10 @@ router.get('/:slug', getProductsBySlug)
 
 router.get('/search/:title', searchProductsByTitle)
 
-router.post('/', upload.single('image'), createSingleProduct)
+router.post("/", validateCreateProduct, runValidation, upload.single('image'), createSingleProduct);
 
 router.delete('/:slug', deleteProductBySlug)
 
-router.put('/:slug', updateProductBySlug)
+router.put("/:slug", validateUpdateProduct, runValidation, updateProductBySlug);
 
 export default router

@@ -1,32 +1,32 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import slugify from 'slugify';
 
 import { IProduct, Products } from "../models/productSchema";
-import { createHttpError } from "../util/createHTTPError";
 import { findProductBySlug, removeProductBySlug } from "../services/productServices";
+import { createHttpError } from "../util/createHTTPError";
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         //limit and page number
-    let page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 3;
+        let page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 3;
 
-    const count = await Products.countDocuments();
-    const totalPages = Math.ceil(count / limit);
+        const count = await Products.countDocuments();
+        const totalPages = Math.ceil(count / limit);
 
-    if (page > totalPages){
-        page = totalPages;
-    }
-    const skip = (page-1) * limit;
+        if (page > totalPages) {
+            page = totalPages;
+        }
+        const skip = (page - 1) * limit;
         const products = await Products.find().skip(skip).limit(limit);
-        res.json({ 
-            message: 'all products are returned', 
+        res.json({
+            message: 'all products are returned',
             payload: {
-                products, 
+                products,
                 currentPage: page,
                 totalPages,
             }
-             });
+        });
     } catch (error) {
         next(error);
     }
@@ -64,7 +64,7 @@ export const createSingleProduct = async (req: Request, res: Response, next: Nex
 
         const productExsist = await Products.exists({ title: title });
         if (productExsist) {
-            throw new Error("Product is not exist with this title");
+            throw new Error("Product is exist with this title");
         };
         const product: IProduct = new Products({
             _id: id,

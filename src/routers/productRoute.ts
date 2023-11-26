@@ -8,6 +8,8 @@ import {
     updateProductBySlug,
 } from "../controllers/productController";
 import { upload } from "../middlewares/uploadFile";
+import { runValidation } from "../validation";
+import { validateCreateProduct, validateUpdateProduct } from "../validation/productValidation";
 
 const router = Router();
 
@@ -17,10 +19,10 @@ router.get("/:slug", getProductsBySlug);
 
 //router.get("/:id", getSingleProduct);
 
-router.post("/", upload.single('image'), createSingleProduct);
+router.post("/", validateCreateProduct, runValidation, upload.single('image'), createSingleProduct);
 
 router.delete("/:slug", deleteProductBySlug);
 
-router.put("/:slug", updateProductBySlug);
+router.put("/:slug", validateUpdateProduct, runValidation, updateProductBySlug);
 
 export default router;

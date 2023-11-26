@@ -1,126 +1,148 @@
 import { Request, Response, NextFunction } from "express";
-import { Users } from "../models/userSchema";
-import { IUser, UserInput } from "../types/userTypes";
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
 
+import { Users } from "../models/userSchema";
+import { UserInput } from "../types/userTypes";
+import { createUser, getUser, sendToken, userActivate } from "../services/userServices";
+
+
+export const processRegisterUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        const register = await sendToken(req, res, next)
+
+        res.status(200).json({
+            message: 'check your Email to activate your account',
+            token: register,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const activateUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+        await userActivate(req)
+
+        res.status(201).json({
+            message: 'User registration successful',
+        })
+
+    } catch (error) {
+        if (error instanceof TokenExpiredError || error instanceof JsonWebTokenError) {
+            const errorMessage = error instanceof TokenExpiredError ? 'expired token' : 'Invalid token'
+            next(Error(errorMessage))
+        } else {
+            next(error)
+        }
+    }
+}
 
 export const getAllUsers = async (
     req: Request,
     res: Response,
     next: NextFunction
-)=>{
-    try{
+) => {
+    try {
 
-    let page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 3;
+        let page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 3;
 
-    const count = await Users.countDocuments();
-    const totalPages = Math.ceil(count / limit);
+        const count = await Users.countDocuments();
+        const totalPages = Math.ceil(count / limit);
 
-    if (page > totalPages){
-        page = totalPages;
-    }
-    const skip = (page-1) * limit;
-    const users = await Users.find().skip(skip).limit(limit);
-    res.status(200).send({
-        message: 'all users are returend',
-        payload:{ 
-            users,
-            currentPage: page,
-            totalPages,
+        if (page > totalPages) {
+            page = totalPages;
         }
-    });
-} catch (error) {
-    next(error)
-}
+        const skip = (page - 1) * limit;
+        const users = await Users.find().skip(skip).limit(limit);
+        res.status(200).send({
+            message: 'all users are returend',
+            payload: {
+                users,
+                currentPage: page,
+                totalPages,
+            }
+        });
+    } catch (error) {
+        next(error)
+    }
 };
 
 export const getSingleUser = async (
-    req: Request, 
+    req: Request,
     res: Response,
     next: NextFunction
-    ) => {
+) => {
     try {
-      const userName = req.params.userName;
-      const user = await Users.find({ userName: userName});
-      if (!user) {
-        throw new Error(`user not found with this user name ${userName}`)
-      }
-      res.status(200).json ({
-        message: `get single user with user name ${userName}`,
-        payload: user
-    }) 
-    } catch (error){
-      next(error)
+
+        const user = await getUser(req)
+        const userName = req.params.userName;
+        res.status(200).json({
+            message: `get single user with user name ${userName}`,
+            payload: user
+        })
+    } catch (error) {
+        next(error)
     }
-  };
+};
 
-  export const createSingleUser = async (
-    req: Request, 
-    res: Response, 
-    next: NextFunction
-    ) =>{
-    try{
-    const {
-        firstName,
-        lastName,
-        userName,
-        email,
-        password
-    } = req.body;
-    const user ={ 
-        firstName,
-        lastName,
-        userName,
-        email,
-        password};
-        await new Users(user).save()
-    res.status(201).json ({
-        message: 'user is added'
-    })
-}catch (error){
-    next(error)
-}
-  };
-
-  export const deleteSingleUser = async (
-    req: Request, 
+export const createSingleUser = async (
+    req: Request,
     res: Response,
     next: NextFunction
-    ) => {
+) => {
     try {
-      const userName = req.params.userName;
-      const user = await Users.findOneAndDelete({userName: userName});
-      if (!user) {
-        throw new Error(`user not found with this user name ${userName}`)
-      }
-      res.status(200).json ({
-        message: `delete user with user name ${userName}`,
-    }) 
-    } catch (error){
-      next(error)
-    }
-  };
 
-  export const updateSingleUser = async (
-    req: Request, 
+        const newUser = await createUser(req)
+        res.status(201).json({
+            message: 'user is added'
+        })
+    } catch (error) {
+        next(error)
+    }
+};
+
+export const deleteSingleUser = async (
+    req: Request,
     res: Response,
     next: NextFunction
-    ) => {
+) => {
     try {
-      const userName = req.params.userName;
-      const userUpdated: UserInput = req.body;
-      const user = await Users.findOneAndUpdate({userName: userName}, userUpdated, {
-        new: true,
-      });
-      if (!user){
-        throw new Error(`User not found with this user name ${userName}`)
-      } 
-      res.status(200).json ({
-        message: `update user with user name ${userName}`,
-        payload: user
-    }) 
-    return;
-    } catch (error){
-      next(error)
+        const userName = req.params.userName;
+        const user = await Users.findOneAndDelete({ userName: userName });
+        if (!user) {
+            throw new Error(`user not found with this user name ${userName}`)
+        }
+        res.status(200).json({
+            message: `delete user with user name ${userName}`,
+        })
+    } catch (error) {
+        next(error)
     }
-  };
+};
+
+export const updateSingleUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const userName = req.params.userName;
+        const userUpdated: UserInput = req.body;
+        const user = await Users.findOneAndUpdate({ userName: userName }, userUpdated, {
+            new: true,
+        });
+        if (!user) {
+            throw new Error(`User not found with this user name ${userName}`)
+        }
+        res.status(200).json({
+            message: `update user with user name ${userName}`,
+            payload: user
+        })
+        return;
+    } catch (error) {
+        next(error)
+    }
+};

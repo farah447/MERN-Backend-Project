@@ -3,42 +3,69 @@ import slugify from 'slugify';
 
 import { IProduct, Products } from "../models/productSchema";
 import { createHttpError } from "../util/createHTTPError";
-import { findProductBySlug, removeProductBySlug } from "../services/productServices";
+import  { AllProducts, createProduct, findProductBySlug, removeProductBySlug } from "../services/productServices";
+
+// export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         //limit and page number
+//     let page = Number(req.query.page) || 1;
+//     const limit = Number(req.query.limit) || 3;
+
+//     const count = await Products.countDocuments();
+//     const totalPages = Math.ceil(count / limit);
+
+//     if (page > totalPages){
+//         page = totalPages;
+
+        
+//     }
+
+//     let minPrice=Number(req.query.minPrice)||0
+//     let maxPrice=Number(req.query.maxPrice)||50000
+
+
+
+//     const skip = (page-1) * limit;
+//         const products = await Products.find({$and: [{price:{$gt:minPrice}}, {price:{$lt:maxPrice}}]}).skip(skip).limit(limit).sort({price:-1});
+//         res.json({ 
+//             message: 'all products are returned', 
+//             payload: {
+//                 products, 
+//                 currentPage: page,
+//                 totalPages,
+//             }
+//              });
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
+
+
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        //limit and page number
-    let page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 3;
+        let page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 3;
+        let minPrice = Number(req.query.minPrice) || 0;
+        let maxPrice = Number(req.query.maxPrice) || 50000;
 
-    const count = await Products.countDocuments();
-    const totalPages = Math.ceil(count / limit);
+        const result = await AllProducts(page, limit, minPrice, maxPrice);
 
-    if (page > totalPages){
-        page = totalPages;
-
-        
-    }
-
-    let minPrice=Number(req.query.minPrice)||0
-    let maxPrice=Number(req.query.maxPrice)||50000
-
-
-
-    const skip = (page-1) * limit;
-        const products = await Products.find({$and: [{price:{$gt:minPrice}}, {price:{$lt:maxPrice}}]}).skip(skip).limit(limit);
-        res.json({ 
-            message: 'all products are returned', 
+        res.json({
+            message: 'All products are returned',
             payload: {
-                products, 
-                currentPage: page,
-                totalPages,
-            }
-             });
+                products: result.products,
+                currentPage: result.currentPage,
+                totalPages: result.totalPages,
+            },
+        });
     } catch (error) {
         next(error);
     }
 };
+
+
 
 /*export const getSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -66,28 +93,18 @@ export const getProductsBySlug = async (req: Request, res: Response, next: NextF
     }
 }
 
-export const createSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
+export const createSingleProduct = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
     try {
         const { id, title, price, description, category, quantity, sold, shipping } = req.body;
 
-        const productExsist = await Products.exists({ title: title });
-        if (productExsist) {
-            throw new Error("Product is not exist with this title");
-        };
-        const product: IProduct = new Products({
-            _id: id,
-            title: title,
-            price: price,
-            slug: slugify(title),
-            description: description,
-            quantity: quantity,
-            category: category,
-            sold: sold,
-            shipping: shipping
-        });
-        await product.save();
+        await createProduct(id, title, price, description, category, quantity, sold, shipping);
+
         res.status(201).json({
-            message: 'single product created',
+            message: 'Single product created',
         });
     } catch (error) {
         next(error);

@@ -1,10 +1,12 @@
 import { Router } from 'express'
 
 import {
+    activateUser,
   createSingleUser,
   deleteSingleUser,
   getAllUsers,
   getSingleUser,
+  processRegisterUser,
   updateSingleUser,
 } from '../controllers/userController'
 
@@ -20,4 +22,9 @@ router.delete('/:userName', deleteSingleUser)
 
 router.put('/:userName', updateSingleUser)
 
-export default router
+router.post('/process-register', processRegisterUser)
+
+router.post('/activate', activateUser)
+
+export default router;
+

@@ -38,3 +38,12 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
         next(error);
     }
 }
+
+export const handleLogout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        res.clearCookie('access_token');
+        res.send({ message: "user is logged out" });
+    } catch (error) {
+        next(error);
+    }
+}

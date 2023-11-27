@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from 'express'
+import cookieParser from 'cookie-parser'
 
 import { dev } from './config'
 import { connectDB } from './config/db'
@@ -19,7 +20,7 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`)
   connectDB()
 })
-
+app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

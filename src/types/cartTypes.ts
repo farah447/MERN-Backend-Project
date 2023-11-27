@@ -3,7 +3,7 @@ import { Document } from 'mongoose'
 import { IProduct } from './productTypes'
 import { IUser } from './userTypes'
 
-export interface IOrder extends Document {
+export interface ICart extends Document {
   _id: string
   user: IUser['_id']
   products: IProduct['_id'][]

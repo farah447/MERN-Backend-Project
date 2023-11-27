@@ -1,8 +1,8 @@
 import { Schema, model } from 'mongoose'
 
-import { IOrder } from '../types/orderTypes'
+import { ICart } from '../types/cartTypes'
 
-const orderSchema = new Schema(
+const cartSchema = new Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -15,15 +15,13 @@ const orderSchema = new Schema(
       required: true,
     },
     amount: {
-      type: Number,
-      required: true,
+      type: Number, // sum of all products + shipping
     },
     totalProducts: {
       type: Number,
-      required: true,
     },
   },
   { timestamps: true }
 )
 
-export const Order = model<IOrder>('Orders', orderSchema)
+export const Cart = model<ICart>('Carts', cartSchema)

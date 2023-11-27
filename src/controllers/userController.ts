@@ -3,7 +3,15 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
 
 import { Users } from "../models/userSchema";
 import { UserInput } from "../types/userTypes";
-import { createUser, getUser, sendToken, userActivate } from "../services/userServices";
+import {
+    banUserByUserName,
+    createUser,
+    getUser,
+    sendToken,
+    unbanUserByUserName,
+    userActivate
+} from "../services/userServices";
+
 
 
 export const processRegisterUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -36,6 +44,30 @@ export const activateUser = async (req: Request, res: Response, next: NextFuncti
         } else {
             next(error)
         }
+    }
+}
+
+export const banUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await banUserByUserName(req)
+
+        res.status(200).send({
+            message: 'banned the user',
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const unbanUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await unbanUserByUserName(req)
+
+        res.status(200).send({
+            message: 'unbanned the user',
+        })
+    } catch (error) {
+        next(error)
     }
 }
 

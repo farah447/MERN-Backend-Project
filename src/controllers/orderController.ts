@@ -1,39 +1,30 @@
 import { NextFunction, Request, Response } from 'express'
 import createHttpError from 'http-errors'
 
+import { Cart } from '../models/cartSchema'
 import { Order } from '../models/orderSchema'
+import { checkUserExistById, resetCart } from '../services/cartServices'
+import {
+  findAllOrders,
+  findOrderById,
+  removeOrderById,
+  // updateOrderById,
+} from '../services/orderServices'
 import { IOrder } from '../types/orderTypes'
-import { Products } from '../models/productSchema'
-import { Users } from '../models/userSchema'
 
 export const getAllOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || 3
 
-    const count = await Order.countDocuments()
-    const totalPages = Math.ceil(count / limit)
+    const result = await findAllOrders(page, limit)
 
-    if (page > totalPages) {
-      page = totalPages
-    }
-    const skip = (page - 1) * limit
-    const existingOrders: IOrder[] = await Order.find()
-      .populate('productId')
-      .populate('userId')
-      .skip(skip)
-      .limit(limit)
-
-    if (existingOrders.length === 0) {
-      throw createHttpError(404, 'There are no orders in database')
-    }
-
-    res.status(200).json({
+    res.json({
       message: 'All orders are returned',
       payload: {
-        existingOrders,
-        currentPage: page,
-        totalPages,
+        orders: result.existingOrders,
+        currentPage: result.currentPage,
+        totalPages: result.totalPages,
       },
     })
   } catch (error) {
@@ -44,11 +35,8 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
 export const getSingleOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
-    const order = await Order.find({ _id: id }).populate('productId').populate('userId')
 
-    if (order.length === 0) {
-      throw createHttpError(404, `Order not found with this id: ${id}`)
-    }
+    const order = await findOrderById(id)
 
     res.status(200).json({
       message: 'Order returned',
@@ -59,29 +47,31 @@ export const getSingleOrderById = async (req: Request, res: Response, next: Next
   }
 }
 
-export const createNewOrder = async (req: Request, res: Response, next: NextFunction) => {
+export const placeNewOrderByUserId = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { productId, userId } = req.body
+    const userId = req.params.userId
 
-    const productExsist = await Products.exists({ _id: productId })
-    const userExsist = await Users.exists({ _id: userId })
+    const userExsist = await checkUserExistById(userId)
+    const cartExsist = await Cart.findOne({ user: userId }).populate('products').populate('user')
 
-    if (!productExsist) {
-      throw createHttpError(404, `Product not found with this id: ${productId}`)
+    //Cart exists for user, place order, and reset cart
+    if (cartExsist) {
+      const newOrder: IOrder = new Order({
+        user: cartExsist.user,
+        products: cartExsist.products,
+        amount: cartExsist.amount,
+        totalProducts: cartExsist.totalProducts,
+      })
+      await resetCart(userId)
+      await newOrder.save()
+      res.status(201).json({
+        message: 'Order placed successfully, and cart reseted',
+        payload: newOrder,
+      })
+      return
     }
-    if (!userExsist) {
-      throw createHttpError(404, `User not found with this id: ${userId}`)
-    }
-
-    const newOrder: IOrder = new Order({
-      productId,
-      userId,
-    })
-
-    await newOrder.save()
-    res.status(201).json({
-      message: 'New order created',
-    })
+    //No cart for user, throw error
+    throw createHttpError(404, `Cart is empty for this user id: ${userExsist._id}`)
   } catch (error) {
     next(error)
   }
@@ -90,12 +80,8 @@ export const createNewOrder = async (req: Request, res: Response, next: NextFunc
 export const deleteOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
-    const order = await Order.find({ _id: id })
-    if (order.length === 0) {
-      throw createHttpError(404, `Order not found with this id: ${id}`)
-    }
+    await removeOrderById(id)
 
-    await Order.deleteOne({ _id: id })
     res.status(200).json({
       message: 'Order deleted',
     })
@@ -104,32 +90,18 @@ export const deleteOrderById = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const updateOrderbyId = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const id = req.params.id
-    const { productId, userId } = req.body
+// export const updateOrderbyId = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const id = req.params.id
+//     const { productId, userId } = req.body
 
-    const productExsist = await Products.exists({ _id: productId })
-    const userExsist = await Users.exists({ _id: userId })
+//     const updatedOrder = await updateOrderById(id, productId, userId)
 
-    if (!productExsist) {
-      throw createHttpError(404, `Product not found with this id: ${productId}`)
-    }
-    if (!userExsist) {
-      throw createHttpError(404, `User not found with this id: ${userId}`)
-    }
-
-    const updatedOrder = await Order.findOneAndUpdate({ _id: id }, req.body, { new: true })
-
-    if (!updatedOrder) {
-      throw createHttpError(404, `Order not found with this id: ${id}`)
-    }
-
-    res.send({
-      message: 'Order updated',
-      payload: updatedOrder,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+//     res.send({
+//       message: 'Order updated',
+//       payload: updatedOrder,
+//     })
+//   } catch (error) {
+//     next(error)
+//   }
+// }

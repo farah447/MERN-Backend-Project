@@ -51,7 +51,7 @@ const usersSchema = new Schema({
     isBanned: {
         type: Boolean,
         default: false,
-      },
+    },
 },
     { timestamps: true }
 )

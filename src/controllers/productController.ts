@@ -49,8 +49,9 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
         const limit = Number(req.query.limit) || 3;
         let minPrice = Number(req.query.minPrice) || 0;
         let maxPrice = Number(req.query.maxPrice) || 50000;
+        let search =req.query.search as string ;
 
-        const result = await AllProducts(page, limit, minPrice, maxPrice);
+        const result = await AllProducts(page, limit, minPrice, maxPrice,search);
 
         res.json({
             message: 'All products are returned',
@@ -58,6 +59,8 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
                 products: result.products,
                 currentPage: result.currentPage,
                 totalPages: result.totalPages,
+                // product: result.products,
+                
             },
         });
     } catch (error) {

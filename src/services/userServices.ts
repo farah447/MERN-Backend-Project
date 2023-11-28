@@ -88,3 +88,23 @@ export const createUser = async (req: Request) => {
     };
     await new Users(user).save()
 }
+
+export const banUserByUserName = async (req: Request) => {
+
+    const userName = req.params.userName;
+    const user = await Users.findOneAndUpdate({ userName: userName }, { isBanned: true })
+    if (!user) {
+        throw new Error('User not found')
+    }
+    return user;
+}
+
+export const unbanUserByUserName = async (req: Request) => {
+
+    const userName = req.params.userName;
+    const user = await Users.findOneAndUpdate({ userName: userName }, { isBanned: false })
+    if (!user) {
+        throw new Error('User not found')
+    }
+    return user;
+}

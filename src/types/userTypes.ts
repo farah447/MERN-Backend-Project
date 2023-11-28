@@ -8,6 +8,9 @@ export interface IUser extends Document {
     email: String;
     password: String;
     isAdmin: Boolean;
+    isBanned: boolean
+    createdAt?: string
+    updatedAt?: string
 }
 
 export type EmailDataType = {

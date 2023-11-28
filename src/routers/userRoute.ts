@@ -1,30 +1,43 @@
 import { Router } from 'express'
 
 import {
-    activateUser,
+  activateUser,
+  banUser,
   createSingleUser,
   deleteSingleUser,
   getAllUsers,
   getSingleUser,
   processRegisterUser,
+  unbanUser,
   updateSingleUser,
 } from '../controllers/userController'
+import { isAdmin, isLoggedIn, isLoggedOut } from '../middlewares/auth'
 
 const router = Router()
 
-router.get('/', getAllUsers)
+router.post('/process-register',
+  //uploadUser.single('image'),
+  isLoggedOut,
+  processRegisterUser
+);
 
-router.get('/:userName', getSingleUser)
+router.get('/', isLoggedIn, isAdmin, getAllUsers)
+
+router.get('/:userName', isLoggedIn, getSingleUser)
 
 router.post('/', createSingleUser)
 
-router.delete('/:userName', deleteSingleUser)
+router.delete('/:userName', isLoggedIn, isAdmin, deleteSingleUser)
 
 router.put('/:userName', updateSingleUser)
 
 router.post('/process-register', processRegisterUser)
 
-router.post('/activate', activateUser)
+router.post('/activate', isLoggedOut, activateUser)
+
+router.put('/ban/:userName', isLoggedIn, isAdmin, banUser)
+
+router.put('/unban/:userName', isLoggedIn, isAdmin, unbanUser)
 
 export default router;
 

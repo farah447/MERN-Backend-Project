@@ -1,11 +1,11 @@
 import { Router } from 'express'
 
 import {
-  placeNewOrderByUserId,
   deleteOrderById,
   getAllOrders,
   getSingleOrderById,
-  // updateOrderbyId,
+  placeNewOrder,
+  updateOrderQty,
 } from '../controllers/orderController'
 
 const ordersRouter = Router()
@@ -16,8 +16,8 @@ ordersRouter.get('/:id', getSingleOrderById)
 
 ordersRouter.delete('/:id', deleteOrderById)
 
-ordersRouter.post('/:userId', placeNewOrderByUserId)
+ordersRouter.put('/:id', updateOrderQty)
 
-// ordersRouter.put('/:id', updateOrderbyId)
+ordersRouter.post('/', placeNewOrder)
 
 export default ordersRouter

@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
-import createHttpError from 'http-errors'
 
-import { Cart } from '../models/cartSchema'
 import { Order } from '../models/orderSchema'
-import { checkUserExistById, resetCart } from '../services/cartServices'
 import {
+  checkUserExistById,
   findAllOrders,
   findOrderById,
+  getOrderData,
   removeOrderById,
-  // updateOrderById,
+  updateStockAndSold,
 } from '../services/orderServices'
 import { IOrder } from '../types/orderTypes'
 
@@ -17,14 +16,14 @@ export const getAllOrders = async (req: Request, res: Response, next: NextFuncti
     let page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || 3
 
-    const result = await findAllOrders(page, limit)
+    const { existingOrders, currentPage, totalPages } = await findAllOrders(page, limit)
 
-    res.json({
+    res.status(200).json({
       message: 'All orders are returned',
       payload: {
-        orders: result.existingOrders,
-        currentPage: result.currentPage,
-        totalPages: result.totalPages,
+        orders: existingOrders,
+        currentPage: currentPage,
+        totalPages: totalPages,
       },
     })
   } catch (error) {
@@ -47,39 +46,10 @@ export const getSingleOrderById = async (req: Request, res: Response, next: Next
   }
 }
 
-export const placeNewOrderByUserId = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.userId
-
-    const userExsist = await checkUserExistById(userId)
-    const cartExsist = await Cart.findOne({ user: userId }).populate('products').populate('user')
-
-    //Cart exists for user, place order, and reset cart
-    if (cartExsist) {
-      const newOrder: IOrder = new Order({
-        user: cartExsist.user,
-        products: cartExsist.products,
-        amount: cartExsist.amount,
-        totalProducts: cartExsist.totalProducts,
-      })
-      await resetCart(userId)
-      await newOrder.save()
-      res.status(201).json({
-        message: 'Order placed successfully, and cart reseted',
-        payload: newOrder,
-      })
-      return
-    }
-    //No cart for user, throw error
-    throw createHttpError(404, `Cart is empty for this user id: ${userExsist._id}`)
-  } catch (error) {
-    next(error)
-  }
-}
-
 export const deleteOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
+
     await removeOrderById(id)
 
     res.status(200).json({
@@ -90,18 +60,54 @@ export const deleteOrderById = async (req: Request, res: Response, next: NextFun
   }
 }
 
-// export const updateOrderbyId = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const id = req.params.id
-//     const { productId, userId } = req.body
+export const placeNewOrder = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { user, orderItems } = req.body
 
-//     const updatedOrder = await updateOrderById(id, productId, userId)
+    await checkUserExistById(user)
 
-//     res.send({
-//       message: 'Order updated',
-//       payload: updatedOrder,
-//     })
-//   } catch (error) {
-//     next(error)
-//   }
-// }
+    const { amount, totalProducts, updatedProducts } = await getOrderData(orderItems)
+
+    const newOrder: IOrder = new Order({
+      user,
+      orderItems,
+      amount,
+      totalProducts,
+    })
+    await newOrder.save()
+
+    await updateStockAndSold(updatedProducts)
+
+    res.status(201).json({
+      message: 'Order placed successfully, and stock updated',
+      payload: newOrder,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateOrderQty = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id
+    const { orderItems } = req.body
+
+    const order = await findOrderById(id)
+    const { amount, totalProducts, updatedProducts } = await getOrderData(orderItems)
+
+    // Update the order
+    order.orderItems = orderItems
+    order.amount = amount
+    order.totalProducts = totalProducts
+    await order.save()
+
+    await updateStockAndSold(updatedProducts)
+
+    res.status(200).json({
+      message: 'Order updated successfully',
+      payload: order,
+    })
+  } catch (error) {
+    next(error)
+  }
+}

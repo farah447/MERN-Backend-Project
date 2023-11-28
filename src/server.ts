@@ -5,7 +5,6 @@ import { dev } from './config'
 import { connectDB } from './config/db'
 import { errorHandler } from './middlewares/errorHandler'
 import authRoute from './routers/authRoute'
-import cartsRouter from './routers/cartRoute'
 import categoriesRouter from './routers/categoryRoute'
 import ordersRouter from './routers/orderRoute'
 import productRoute from './routers/productRoute'
@@ -32,8 +31,6 @@ app.use('/products', productRoute)
 app.use('/orders', ordersRouter)
 app.use('/categories', categoriesRouter)
 app.use('/users', usersRouter)
-app.use('/carts', cartsRouter)
-app.use('/auth', authRoute)
 
 app.use((req, res, next) => {
   next(createHttpError(404, 'Route Not Found'))

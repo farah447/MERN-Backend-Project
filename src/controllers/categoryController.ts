@@ -2,11 +2,13 @@ import { NextFunction, Request, Response } from 'express'
 import slugify from 'slugify'
 
 import { Category } from '../models/categorySchema'
+import createHttpError from 'http-errors'
+import { getCategoryBySlugService } from '../services/categoryService'
 
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await Category.find()
-    res.send({ message: 'Get all Categories', payload: categories })
+    res.status(200).send({ message: 'Get all Categories', payload: categories })
   } catch (error) {
     next(error)
   }
@@ -16,9 +18,9 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
   try {
     const { title } = req.body
 
-    const CategoryExist = await Category.exists({ title: title })
-    if (CategoryExist) {
-      throw new Error('Category already exists')
+    const categoryExist = await Category.exists({ title: title })
+    if (categoryExist) {
+      throw createHttpError(404,'Category already exists')
     }
     const newCategory = new Category({
       title: title,
@@ -34,24 +36,21 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
 
 export const getCategoryBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const category = await Category.find({ slug: req.params.slug })
-    if (category.length === 0) {
-      throw new Error('Category not found')
-    }
-
-    res.send({ message: 'Get one Category', payload: category })
+    const category = await getCategoryBySlugService(req.params.slug);
+    res.send({ message: 'Get one Category', payload: category });
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
+
 
 export const deleteCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const category = await Category.findOneAndDelete({ slug: req.params.slug })
     if (!category) {
-      throw new Error('Category is not found')
+      throw createHttpError(404,'Category is not found')
     }
-    res.send({ message: 'Delete category', payload: category })
+    res.status(201).send({ message: 'Delete category', payload: category })
   } catch (error) {
     next(error)
   }
@@ -68,9 +67,9 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
     })
 
     if (!category) {
-      throw new Error('Category is not found')
+      throw createHttpError(404,'Category is not found')
     }
-    res.send({ message: 'Update single Category', payload: category })
+    res.status(201).send({ message: 'Update single Category', payload: category })
   } catch (error) {
     next(error)
   }

@@ -1,5 +1,5 @@
-import express, { Application, Request, Response } from 'express'
 import cookieParser from 'cookie-parser'
+import express, { Application, Request, Response } from 'express'
 
 import { dev } from './config'
 import { connectDB } from './config/db'
@@ -19,7 +19,7 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`)
   connectDB()
 })
-app.use(cookieParser());
+app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -31,6 +31,7 @@ app.use('/products', productRoute)
 app.use('/orders', ordersRouter)
 app.use('/categories', categoriesRouter)
 app.use('/users', usersRouter)
+app.use('/auth', authRoute)
 
 app.use((req, res, next) => {
   next(createHttpError(404, 'Route Not Found'))

@@ -25,7 +25,7 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
             throw createHttpError(403, "USser is banned, please contact support");
         }
 
-        const accessToken = JWT.sign({ _id: user._id }, dev.app.jwtAccessKey, { expiresIn: '1m' });
+        const accessToken = JWT.sign({ _id: user._id }, dev.app.jwtAccessKey, { expiresIn: '10m' });
 
         res.cookie('access_token', accessToken, {
             maxAge: 15 * 60 * 1000, //15 minutes

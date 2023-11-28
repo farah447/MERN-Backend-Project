@@ -108,3 +108,26 @@ export const unbanUserByUserName = async (req: Request) => {
     }
     return user;
 }
+
+
+
+
+export const allUser = async (
+    search: string
+  ) => {
+   
+    const regExpSearch = new RegExp('.*' + search + '.*', 'i')
+    const filter = {
+      $or: [{ title: { $regex: regExpSearch } }, { description: { $regex: regExpSearch } }],
+    }
+  
+    
+    const users = await Users.find(filter)
+  
+      // const product = await Products.find() 
+    return {
+      users,
+     
+    }
+  }
+  

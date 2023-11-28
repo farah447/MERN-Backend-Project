@@ -12,11 +12,12 @@ import {
   updateSingleUser,
 } from '../controllers/userController'
 import { isAdmin, isLoggedIn, isLoggedOut } from '../middlewares/auth'
+import { uploadUser } from '../middlewares/uploadFile';
 
 const router = Router()
 
 router.post('/process-register',
-  //uploadUser.single('image'),
+  uploadUser.single('image'),
   isLoggedOut,
   processRegisterUser
 );
@@ -25,7 +26,7 @@ router.get('/', isLoggedIn, isAdmin, getAllUsers)
 
 router.get('/:userName', isLoggedIn, getSingleUser)
 
-router.post('/', createSingleUser)
+router.post('/', uploadUser.single('image'), createSingleUser)
 
 router.delete('/:userName', isLoggedIn, isAdmin, deleteSingleUser)
 

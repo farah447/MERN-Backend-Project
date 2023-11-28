@@ -12,6 +12,7 @@ import {
   findProductBySlug,
   removeProductBySlug,
 } from '../services/productServices'
+import { deleteImage } from '../helper/deleteImageHelper'
 
 // export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
 //     try {
@@ -125,7 +126,10 @@ export const createSingleProduct = async (req: Request, res: Response, next: Nex
 
 export const deleteProductBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const product = await removeProductBySlug(req.params.slug)
+    const product = await removeProductBySlug(req.params.slug);
+    if (product && product.image) {
+      await deleteImage(String(product.image));
+    }
     res.json({
       message: 'Deleted single product',
       payload: product,

@@ -44,6 +44,10 @@ const usersSchema = new Schema({
         minlength: [6, 'Last name must be at least 6 characters'],
         set: (password: string) => bcrybt.hashSync(password, 10),
     },
+    image: {
+        type: String,
+        default: 'public/images/users/default.png',
+    },
     isAdmin: {
         type: Boolean,
         default: false,

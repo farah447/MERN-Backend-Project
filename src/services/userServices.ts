@@ -77,14 +77,16 @@ export const createUser = async (req: Request) => {
         lastName,
         userName,
         email,
-        password
+        password,
+        image,
     } = req.body;
     const user = {
         firstName,
         lastName,
         userName,
         email,
-        password
+        password,
+        image
     };
     await new Users(user).save()
 }

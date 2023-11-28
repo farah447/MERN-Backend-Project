@@ -47,12 +47,12 @@ export const AllProducts = async (
   const skip = (page - 1) * limit
   const products = await Products.find({
     $and: [{ price: { $gt: minPrice } }, { price: { $lt: maxPrice } }]
-  } )
+  })
     .skip(skip)
     .limit(limit)
     .sort({ price: -1 }).find(filter)
 
-    // const product = await Products.find() 
+  // const product = await Products.find() 
   return {
     products,
     currentPage: page,
@@ -65,6 +65,7 @@ export const createProduct = async (
   id: string,
   title: string,
   price: number,
+  image: string,
   description: string,
   category: string,
   quantity: number,
@@ -81,6 +82,7 @@ export const createProduct = async (
     _id: id,
     title,
     price,
+    image,
     slug: slugify(title),
     description,
     quantity,

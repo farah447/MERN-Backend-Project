@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+import mongoose from "mongoose";
 
 import { Users } from "../models/userSchema";
 import { UserInput } from "../types/userTypes";
@@ -11,6 +12,8 @@ import {
     unbanUserByUserName,
     userActivate
 } from "../services/userServices";
+import { createHttpError } from "../util/createHTTPError";
+import { deleteImage } from "../helper/deleteImageHelper";
 
 
 
@@ -147,11 +150,19 @@ export const deleteSingleUser = async (
         if (!user) {
             throw new Error(`user not found with this user name ${userName}`)
         }
+        if (user && user.image) {
+            await deleteImage(user.image);
+        }
         res.status(200).json({
             message: `delete user with user name ${userName}`,
         })
     } catch (error) {
-        next(error)
+        if (error instanceof mongoose.Error.CastError) {
+            const error = createHttpError(400, "Id format is not valid");
+            next(error);
+        } else {
+            next(error);
+        }
     }
 };
 

@@ -29,7 +29,7 @@ const productSchema = new Schema(
     category: {
       type: Schema.Types.ObjectId,
       ref: 'categories',
-      required: true,
+      required: false,
     },
     description: {
       type: String,

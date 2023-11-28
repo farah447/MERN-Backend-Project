@@ -22,7 +22,7 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
         }
 
         if (user.isBanned) {
-            throw createHttpError(403, "USser is banned, please contact support");
+            throw createHttpError(403, "User is banned, please contact support");
         }
 
         const accessToken = JWT.sign({ _id: user._id }, dev.app.jwtAccessKey, { expiresIn: '1m' });

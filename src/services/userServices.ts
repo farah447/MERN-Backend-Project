@@ -78,7 +78,6 @@ export const createUser = async (req: Request) => {
         userName,
         email,
         password,
-        image,
     } = req.body;
     const user = {
         firstName,
@@ -86,7 +85,6 @@ export const createUser = async (req: Request) => {
         userName,
         email,
         password,
-        image
     };
     await new Users(user).save()
 }
@@ -116,20 +114,19 @@ export const unbanUserByUserName = async (req: Request) => {
 
 export const allUser = async (
     search: string
-  ) => {
-   
+) => {
+
     const regExpSearch = new RegExp('.*' + search + '.*', 'i')
     const filter = {
-      $or: [{ title: { $regex: regExpSearch } }, { description: { $regex: regExpSearch } }],
+        $or: [{ title: { $regex: regExpSearch } }, { description: { $regex: regExpSearch } }],
     }
-  
-    
+
+
     const users = await Users.find(filter)
-  
-      // const product = await Products.find() 
+
+    // const product = await Products.find() 
     return {
-      users,
-     
+        users,
+
     }
-  }
-  
+}

@@ -5,6 +5,7 @@ import {
   checkUserExistById,
   findAllOrders,
   findOrderById,
+  findOrdersByUserName,
   getOrderData,
   removeOrderById,
   updateStockAndSold,
@@ -46,6 +47,20 @@ export const getSingleOrderById = async (req: Request, res: Response, next: Next
   }
 }
 
+export const getUserOrdersByUserName = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userName = req.params.userName
+    const order = await findOrdersByUserName(String(userName))
+
+    res.status(200).json({
+      message: 'Orders returned',
+      payload: order,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const deleteOrderById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.params.id
@@ -64,7 +79,7 @@ export const placeNewOrder = async (req: Request, res: Response, next: NextFunct
   try {
     const { user, orderItems } = req.body
 
-    await checkUserExistById(user)
+    const userExsist = await checkUserExistById(user)
 
     const { amount, totalProducts, updatedProducts } = await getOrderData(orderItems)
 
@@ -75,6 +90,9 @@ export const placeNewOrder = async (req: Request, res: Response, next: NextFunct
       totalProducts,
     })
     await newOrder.save()
+
+    userExsist.orders.push(newOrder._id)
+    await userExsist.save()
 
     await updateStockAndSold(updatedProducts)
 

@@ -41,6 +41,18 @@ export const findOrderById = async (id: string): Promise<IOrder> => {
   return order
 }
 
+export const findOrdersByUserName = async (userName: string): Promise<IOrder[]> => {
+  const userExsist = await checkUserExistByUserName(userName)
+  const order = await Order.find({ user: userExsist })
+    .populate('orderItems.product')
+    .populate('user')
+
+  if (order.length <= 0) {
+    throw createHttpError(404, `There are no orders for this user name: ${userName}`)
+  }
+  return order
+}
+
 export const removeOrderById = async (id: string) => {
   const order = await Order.find({ _id: id })
   if (order.length === 0) {
@@ -83,6 +95,13 @@ export const updateStockAndSold = async (updatedProducts: IUpdatedProduct[]) => 
   }
 }
 
+export const checkUserExistByUserName = async (userName: string): Promise<IUser> => {
+  const userExsist = await Users.findOne({ userName: userName })
+  if (!userExsist) {
+    throw createHttpError(404, `User not found with user name: ${userName}`)
+  }
+  return userExsist
+}
 export const checkUserExistById = async (userId: string): Promise<IUser> => {
   const userExsist = await Users.findOne({ _id: userId })
   if (!userExsist) {

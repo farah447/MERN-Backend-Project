@@ -1,5 +1,7 @@
 import { Document } from 'mongoose'
 
+import { IOrder } from './orderTypes'
+
 export interface IUser extends Document {
   _id: Number
   firstName: String
@@ -10,6 +12,7 @@ export interface IUser extends Document {
   image?: string
   isAdmin: Boolean
   isBanned: boolean
+  orders: IOrder['_id'][]
   createdAt?: Date
   updatedAt?: Date
 }

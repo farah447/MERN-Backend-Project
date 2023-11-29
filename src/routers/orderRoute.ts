@@ -4,17 +4,20 @@ import {
   deleteOrderById,
   getAllOrders,
   getSingleOrderById,
+  getUserOrdersByUserName,
   placeNewOrder,
 } from '../controllers/orderController'
-import { isLoggedIn } from '../middlewares/auth'
+import { isAdmin, isLoggedIn } from '../middlewares/auth'
 
 const ordersRouter = Router()
 
-ordersRouter.get('/', getAllOrders)
+ordersRouter.get('/', isLoggedIn, isAdmin, getAllOrders)
 
-ordersRouter.get('/:id', getSingleOrderById)
+ordersRouter.get('/:id', isLoggedIn, isAdmin, getSingleOrderById)
 
-ordersRouter.delete('/:id', isLoggedIn, deleteOrderById)
+ordersRouter.get('/user/:userName', isLoggedIn, getUserOrdersByUserName)
+
+ordersRouter.delete('/:id', isLoggedIn, isAdmin, deleteOrderById)
 
 ordersRouter.post('/', isLoggedIn, placeNewOrder)
 

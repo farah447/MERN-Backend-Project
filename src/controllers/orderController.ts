@@ -86,28 +86,3 @@ export const placeNewOrder = async (req: Request, res: Response, next: NextFunct
     next(error)
   }
 }
-
-export const updateOrderQty = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const id = req.params.id
-    const { orderItems } = req.body
-
-    const order = await findOrderById(id)
-    const { amount, totalProducts, updatedProducts } = await getOrderData(orderItems)
-
-    // Update the order
-    order.orderItems = orderItems
-    order.amount = amount
-    order.totalProducts = totalProducts
-    await order.save()
-
-    await updateStockAndSold(updatedProducts)
-
-    res.status(200).json({
-      message: 'Order updated successfully',
-      payload: order,
-    })
-  } catch (error) {
-    next(error)
-  }
-}

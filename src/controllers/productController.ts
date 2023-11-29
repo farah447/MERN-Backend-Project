@@ -2,49 +2,11 @@ import { NextFunction, Request, Response } from 'express'
 import { Error } from 'mongoose'
 import slugify from 'slugify'
 
-import { Products } from '../models/productSchema'
-import { IProduct } from '../types/productTypes'
-
-import { createHttpError } from '../util/createHTTPError'
-import {
-  AllProducts,
-  createProduct,
-  findProductBySlug,
-  removeProductBySlug,
-} from '../services/productServices'
 import { deleteImage } from '../helper/deleteImageHelper'
-
-// export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         //limit and page number
-//     let page = Number(req.query.page) || 1;
-//     const limit = Number(req.query.limit) || 3;
-
-//     const count = await Products.countDocuments();
-//     const totalPages = Math.ceil(count / limit);
-
-//     if (page > totalPages){
-//         page = totalPages;
-
-//     }
-
-//     let minPrice=Number(req.query.minPrice)||0
-//     let maxPrice=Number(req.query.maxPrice)||50000
-
-//     const skip = (page-1) * limit;
-//         const products = await Products.find({$and: [{price:{$gt:minPrice}}, {price:{$lt:maxPrice}}]}).skip(skip).limit(limit).sort({price:-1});
-//         res.json({
-//             message: 'all products are returned',
-//             payload: {
-//                 products,
-//                 currentPage: page,
-//                 totalPages,
-//             }
-//              });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
+import { Products } from '../models/productSchema'
+import { AllProducts, findProductBySlug, removeProductBySlug } from '../services/productServices'
+import { IProduct } from '../types/productTypes'
+import { createHttpError } from '../util/createHTTPError'
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -56,13 +18,12 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
 
     const result = await AllProducts(page, limit, minPrice, maxPrice, search)
 
-    res.json({
+    res.status(200).json({
       message: 'All products are returned',
       payload: {
         products: result.products,
         currentPage: result.currentPage,
         totalPages: result.totalPages,
-        // product: result.products,
       },
     })
   } catch (error) {
@@ -70,27 +31,11 @@ export const getAllProducts = async (req: Request, res: Response, next: NextFunc
   }
 }
 
-/*export const getSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const id = req.params.id;
-        const product = await Products.findById({ _id: id });
-        if (!product) {
-            throw new Error("Product is not found with this id");
-        }
-        res.json({
-            message: 'return single product',
-            payload: product,
-        });
-    } catch (error) {
-        next(error);
-    }
-};*/
-
 export const getProductsBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const products = await findProductBySlug(req.params.slug)
 
-    res.json({ message: 'Return a single product', payload: products })
+    res.status(200).json({ message: 'Return a single product', payload: products })
   } catch (error) {
     next(error)
   }
@@ -126,11 +71,11 @@ export const createSingleProduct = async (req: Request, res: Response, next: Nex
 
 export const deleteProductBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const product = await removeProductBySlug(req.params.slug);
+    const product = await removeProductBySlug(req.params.slug)
     if (product && product.image) {
-      await deleteImage(String(product.image));
+      await deleteImage(String(product.image))
     }
-    res.json({
+    res.status(200).json({
       message: 'Deleted single product',
       payload: product,
     })
@@ -151,27 +96,9 @@ export const updateProductBySlug = async (req: Request, res: Response, next: Nex
       const error = createHttpError(404, 'Product not found with this slug')
       throw error
     }
-    res.json({
+    res.status(200).json({
       message: 'Update a single product',
       payload: product,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const searchProductsByTitle = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const title = req.params.title
-    const products = await Products.find({ title: { $regex: title, $options: 'i' } }) // i => case-insensitive
-
-    if (products.length === 0) {
-      throw createHttpError(404, `Product not found with this title: ${title}`)
-    }
-
-    res.status(200).json({
-      message: 'Products returned',
-      payload: products,
     })
   } catch (error) {
     next(error)

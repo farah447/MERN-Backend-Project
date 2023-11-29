@@ -76,7 +76,6 @@ export const getOrderData = async (orderItems: IOrderItem[]) => {
   }
 }
 export const updateStockAndSold = async (updatedProducts: IUpdatedProduct[]) => {
-  // Update product stock and sold
   for (let productUpdate of updatedProducts) {
     await Products.findByIdAndUpdate(productUpdate.id, {
       quantity: productUpdate.newQuantity,
@@ -85,7 +84,6 @@ export const updateStockAndSold = async (updatedProducts: IUpdatedProduct[]) => 
   }
 }
 
-// Validation services
 export const checkUserExistById = async (userId: string): Promise<IUser> => {
   const userExsist = await Users.findOne({ _id: userId })
   if (!userExsist) {

@@ -2,25 +2,20 @@ import { Router } from 'express'
 
 import {
   activateUser,
-  banUser,
   createSingleUser,
   deleteSingleUser,
   getAllUsers,
   getSingleUser,
   processRegisterUser,
-  unbanUser,
+  updateBan,
   updateSingleUser,
 } from '../controllers/userController'
 import { isAdmin, isLoggedIn, isLoggedOut } from '../middlewares/auth'
-import { uploadUser } from '../middlewares/uploadFile';
+import { uploadUser } from '../middlewares/uploadFile'
 
 const router = Router()
 
-router.post('/process-register',
-  uploadUser.single('image'),
-  isLoggedOut,
-  processRegisterUser
-);
+router.post('/process-register', uploadUser.single('image'), isLoggedOut, processRegisterUser)
 
 router.get('/', isLoggedIn, isAdmin, getAllUsers)
 
@@ -36,9 +31,6 @@ router.post('/process-register', processRegisterUser)
 
 router.post('/activate', isLoggedOut, activateUser)
 
-router.put('/ban/:userName', isLoggedIn, isAdmin, banUser)
+router.put('/updateBan/:userName', updateBan)
 
-router.put('/unban/:userName', isLoggedIn, isAdmin, unbanUser)
-
-export default router;
-
+export default router

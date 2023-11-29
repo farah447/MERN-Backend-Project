@@ -7,16 +7,17 @@ import {
   getCategoryBySlug,
   updateCategory,
 } from '../controllers/categoryController'
+import { isAdmin, isLoggedIn } from '../middlewares/auth'
 
 const router = Router()
 
 router.get('/', getCategories)
 
-router.post('/', createCategories)
+router.post('/', isLoggedIn, isAdmin, createCategories)
 
-router.put('/:slug', updateCategory)
+router.put('/:slug', isLoggedIn, isAdmin, updateCategory)
 
-router.delete('/:slug', deleteCategories)
+router.delete('/:slug', isLoggedIn, isAdmin, deleteCategories)
 
 router.get('/:slug', getCategoryBySlug)
 

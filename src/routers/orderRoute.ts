@@ -5,8 +5,8 @@ import {
   getAllOrders,
   getSingleOrderById,
   placeNewOrder,
-  updateOrderQty,
 } from '../controllers/orderController'
+import { isLoggedIn } from '../middlewares/auth'
 
 const ordersRouter = Router()
 
@@ -14,10 +14,8 @@ ordersRouter.get('/', getAllOrders)
 
 ordersRouter.get('/:id', getSingleOrderById)
 
-ordersRouter.delete('/:id', deleteOrderById)
+ordersRouter.delete('/:id', isLoggedIn, deleteOrderById)
 
-ordersRouter.put('/:id', updateOrderQty)
-
-ordersRouter.post('/', placeNewOrder)
+ordersRouter.post('/', isLoggedIn, placeNewOrder)
 
 export default ordersRouter

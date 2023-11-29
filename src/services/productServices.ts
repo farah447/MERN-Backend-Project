@@ -1,10 +1,7 @@
+import slugify from 'slugify'
 
 import { Products } from '../models/productSchema'
 import { IProduct } from '../types/productTypes'
-
-import slugify from 'slugify'
-
-
 import { createHttpError } from '../util/createHTTPError'
 
 export const findProductBySlug = async (slug: string): Promise<IProduct> => {
@@ -46,18 +43,17 @@ export const AllProducts = async (
 
   const skip = (page - 1) * limit
   const products = await Products.find({
-    $and: [{ price: { $gt: minPrice } }, { price: { $lt: maxPrice } }]
+    $and: [{ price: { $gt: minPrice } }, { price: { $lt: maxPrice } }],
   })
     .skip(skip)
     .limit(limit)
-    .sort({ price: -1 }).find(filter)
+    .sort({ price: -1 })
+    .find(filter)
 
-  // const product = await Products.find() 
   return {
     products,
     currentPage: page,
     totalPages,
-    // product
   }
 }
 

@@ -14,20 +14,18 @@ const transporter = nodemailer.createTransport({
 })
 
 export const handleSendEmail = async (emailData: EmailDataType) => {
-  try { 
-    
-  const mailOptions = {
-    from: dev.app.stmpUsername,
-    to: emailData.email,
-    subject: emailData.subject,
-    html: emailData.html,
-
-  }
+  try {
+    const mailOptions = {
+      from: dev.app.stmpUsername,
+      to: emailData.email,
+      subject: emailData.subject,
+      html: emailData.html,
+    }
 
     const info = await transporter.sendMail(mailOptions)
-    console.log("message esnt : "+ info.response)
-  } catch  (error){
-    console.log("error encountered while sende email", error)
+    console.log('message esnt : ' + info.response)
+  } catch (error) {
+    console.log('error encountered while sende email', error)
     throw error
-}
+  }
 }

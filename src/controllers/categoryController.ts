@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import slugify from 'slugify'
+import createHttpError from 'http-errors'
 
 import { Category } from '../models/categorySchema'
-import createHttpError from 'http-errors'
 import { getCategoryBySlugService } from '../services/categoryService'
 
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
@@ -20,7 +20,7 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
 
     const categoryExist = await Category.exists({ title: title })
     if (categoryExist) {
-      throw createHttpError(404,'Category already exists')
+      throw createHttpError(404, 'Category already exists')
     }
     const newCategory = new Category({
       title: title,
@@ -36,19 +36,18 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
 
 export const getCategoryBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const category = await getCategoryBySlugService(req.params.slug);
-    res.send({ message: 'Get one Category', payload: category });
+    const category = await getCategoryBySlugService(req.params.slug)
+    res.send({ message: 'Get one Category', payload: category })
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
-
+}
 
 export const deleteCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const category = await Category.findOneAndDelete({ slug: req.params.slug })
     if (!category) {
-      throw createHttpError(404,'Category is not found')
+      throw createHttpError(404, 'Category is not found')
     }
     res.status(201).send({ message: 'Delete category', payload: category })
   } catch (error) {
@@ -58,8 +57,9 @@ export const deleteCategories = async (req: Request, res: Response, next: NextFu
 
 export const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.body.title) {
-      req.body.slug = slugify(req.body.title)
+    let { title, slug } = req.body
+    if (title) {
+      slug = slugify(title)
     }
 
     const category = await Category.findOneAndUpdate({ slug: req.params.slug }, req.body, {
@@ -67,7 +67,7 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
     })
 
     if (!category) {
-      throw createHttpError(404,'Category is not found')
+      throw createHttpError(404, 'Category is not found')
     }
     res.status(201).send({ message: 'Update single Category', payload: category })
   } catch (error) {

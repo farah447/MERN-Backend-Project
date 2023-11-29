@@ -10,7 +10,7 @@ export interface IProduct extends Document {
   image: String
   description: string
   quantity: number
-  category: ICategory['_id'];
+  category: ICategory['_id']
   sold: number
   shipping: number
   createdAt?: string

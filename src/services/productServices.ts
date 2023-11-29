@@ -71,7 +71,8 @@ export const createProduct = async (
   const productExist = await Products.exists({ title })
 
   if (productExist) {
-    throw new Error('Product already exists with this title')
+    const error = createHttpError(404, 'Product already exists with this title')
+    throw error
   }
 
   const product: IProduct = new Products({

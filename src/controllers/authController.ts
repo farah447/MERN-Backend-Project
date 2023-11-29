@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt'
 import { NextFunction, Request, Response } from 'express'
-import JWT from 'jsonwebtoken'
 
-import { dev } from '../config'
 import { Users } from '../models/userSchema'
 import { createHttpError } from '../util/createHTTPError'
 import generateToken from '../util/generateToken'

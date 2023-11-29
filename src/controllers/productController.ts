@@ -43,16 +43,20 @@ export const getProductsBySlug = async (req: Request, res: Response, next: NextF
 
 export const createSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id, title, price, description, category, quantity, sold, shipping } = req.body
+
+    const file = req.file
+    const imag = file?.path
+    const { title, price, description, category, quantity, sold, shipping } = req.body
 
     const productExsist = await Products.exists({ title: title })
     if (productExsist) {
-      throw new Error('Product is exist with this title')
+      const error = createHttpError(404, 'Product is exist with this title')
+      throw error
     }
     const product: IProduct = new Products({
-      _id: id,
       title: title,
       price: price,
+      image: imag,
       slug: slugify(title),
       description: description,
       quantity: quantity,

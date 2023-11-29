@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose'
 
 import { IProduct } from '../types/productTypes'
+import { dev } from '../config'
 
 const productSchema = new Schema(
   {
@@ -19,12 +20,13 @@ const productSchema = new Schema(
     },
     price: {
       type: Number,
-      require: true,
+      required: true,
       trim: true,
     },
     image: {
       type: String,
-      default: 'public/images/products/default.png',
+      default: dev.app.defaultProductsImagePath,
+      required: true,
     },
     category: {
       type: Schema.Types.ObjectId,

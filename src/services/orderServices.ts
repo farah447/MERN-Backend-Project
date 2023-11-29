@@ -1,11 +1,10 @@
-import createHttpError from 'http-errors'
-
 import { Order } from '../models/orderSchema'
 import { Products } from '../models/productSchema'
 import { Users } from '../models/userSchema'
 import { IOrder, IOrderItem, IUpdatedProduct } from '../types/orderTypes'
 import { IProduct } from '../types/productTypes'
 import { IUser } from '../types/userTypes'
+import { createHttpError } from '../util/createHTTPError'
 
 export const findAllOrders = async (page: number, limit: number) => {
   const count = await Order.countDocuments()

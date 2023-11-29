@@ -22,7 +22,7 @@ export const isLoggedIn = async (req: CustomRequest, res: Response, next: NextFu
       throw createHttpError(401, 'Invalied access token')
     }
 
-    req.userId = decoded._id
+    req.userId = decoded.id
 
     next()
   } catch (error) {

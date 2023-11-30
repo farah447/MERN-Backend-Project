@@ -22,7 +22,7 @@ export const isLoggedIn = async (req: CustomRequest, res: Response, next: NextFu
       throw createHttpError(401, 'Invalied access token')
     }
 
-    req.userId = decoded._id
+    req.userId = decoded.id
 
     next()
   } catch (error) {
@@ -45,7 +45,10 @@ export const isLoggedOut = async (req: Request, res: Response, next: NextFunctio
 export const isAdmin = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
     const user = await Users.findById(req.userId)
-    if (user?.isAdmin) {
+    if (!user) {
+      throw new Error(`user not found with this user id ${user}`)
+    }
+    if (user.isAdmin) {
       next()
     } else {
       throw createHttpError(403, 'You are not admin')

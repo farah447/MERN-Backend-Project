@@ -4,7 +4,7 @@ import slugify from 'slugify'
 
 import { deleteImage } from '../helper/deleteImageHelper'
 import { Products } from '../models/productSchema'
-import { AllProducts, findProductBySlug, removeProductBySlug } from '../services/productServices'
+import { AllProducts, createProduct, findProductBySlug, removeProductBySlug } from '../services/productServices'
 import { IProduct } from '../types/productTypes'
 import { createHttpError } from '../util/createHTTPError'
 
@@ -44,29 +44,10 @@ export const getProductsBySlug = async (req: Request, res: Response, next: NextF
 export const createSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-    const file = req.file
-    const imag = file?.path
-    const { title, price, description, category, quantity, sold, shipping } = req.body
-
-    const productExsist = await Products.exists({ title: title })
-    if (productExsist) {
-      const error = createHttpError(404, 'Product is exist with this title')
-      throw error
-    }
-    const product: IProduct = new Products({
-      title: title,
-      price: price,
-      image: imag,
-      slug: slugify(title),
-      description: description,
-      quantity: quantity,
-      category: category,
-      sold: sold,
-      shipping: shipping,
-    })
-    await product.save()
+    const product = await createProduct(req, res, next)
     res.status(201).json({
       message: 'Single product created',
+      payload: product
     })
   } catch (error) {
     next(error)

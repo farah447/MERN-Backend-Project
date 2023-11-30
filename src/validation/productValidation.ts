@@ -1,6 +1,6 @@
 import { check, ValidationChain } from 'express-validator'
 
-export const validateCreateProduct: ValidationChain[] = [
+export const validateCreateProduct = [
   check('title')
     .trim()
     .notEmpty()
@@ -12,6 +12,7 @@ export const validateCreateProduct: ValidationChain[] = [
     .withMessage('Price is required')
     .isFloat({ min: 1 })
     .withMessage('Price must be a positive number greater than 0'),
+
 ]
 
 export const validateUpdateProduct: ValidationChain[] = [

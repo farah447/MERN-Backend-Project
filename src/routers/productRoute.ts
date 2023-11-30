@@ -8,9 +8,9 @@ import {
     updateProductBySlug,
 } from '../controllers/productController'
 import { uploadProduct } from '../middlewares/uploadFile'
-import { validateCreateProduct, validateUpdateProduct } from '../validation/productValidation'
+// import { validateCreateProduct, validateUpdateProduct } from '../validation/productValidation'
 import { runValidation } from '../validation'
-import { isAdmin, isLoggedOut } from '../middlewares/auth'
+import { isAdmin, isLoggedIn, isLoggedOut } from '../middlewares/auth'
 
 const router = Router()
 
@@ -18,10 +18,14 @@ router.get('/', getAllProducts)
 
 router.get('/:slug', getProductsBySlug)
 
-router.post("/", validateCreateProduct, runValidation, uploadProduct.single('image'), createSingleProduct);
+router.post("/", isLoggedIn, isAdmin,
+// validateCreateProduct, 
+runValidation, uploadProduct.single('image'), createSingleProduct);
 
-router.delete('/:slug', isLoggedOut, isAdmin, deleteProductBySlug)
+router.delete("/:slug", isLoggedIn, isAdmin, deleteProductBySlug)
 
-router.put("/:slug", validateUpdateProduct, runValidation, updateProductBySlug);
+router.put("/:slug",isLoggedIn, isAdmin, 
+// validateUpdateProduct, 
+runValidation, updateProductBySlug);
 
 export default router

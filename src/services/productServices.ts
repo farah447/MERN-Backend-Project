@@ -1,8 +1,10 @@
+import { Request, Response, NextFunction } from 'express'
 import slugify from 'slugify'
 
 import { Products } from '../models/productSchema'
 import { IProduct } from '../types/productTypes'
 import { createHttpError } from '../util/createHTTPError'
+
 
 export const findProductBySlug = async (slug: string): Promise<IProduct> => {
   const products = await Products.findOne({ slug: slug })
@@ -57,34 +59,29 @@ export const AllProducts = async (
   }
 }
 
-export const createProduct = async (
-  id: string,
-  title: string,
-  price: number,
-  description: string,
-  category: string,
-  quantity: number,
-  sold: boolean,
-  shipping: string
-) => {
-  const productExist = await Products.exists({ title })
 
-  if (productExist) {
-    const error = createHttpError(404, 'Product already exists with this title')
+export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
+
+  const file = req.file
+  const img = file?.path
+  const { title, price, description, category, quantity, sold, shipping } = req.body
+
+  const productExsist = await Products.exists({ title: title })
+  if (productExsist) {
+    const error = createHttpError(404, 'Product is exist with this title')
     throw error
   }
-
   const product: IProduct = new Products({
-    _id: id,
-    title,
-    price,
+    title: title,
+    price: price,
+    image: img,
     slug: slugify(title),
-    description,
-    quantity,
-    category,
-    sold,
-    shipping,
+    description: description,
+    quantity: quantity,
+    category: category,
+    sold: sold,
+    shipping: shipping,
   })
-
   await product.save()
+  return product;
 }

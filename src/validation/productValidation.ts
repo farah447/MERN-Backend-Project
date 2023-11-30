@@ -18,14 +18,12 @@ export const validateUpdateProduct: ValidationChain[] = [
   check('title')
     .optional()
     .trim()
-    .notEmpty()
     .withMessage('Product title is required')
     .isLength({ min: 3, max: 200 })
     .withMessage('product name must have at least 3 - 200 characters long'),
   check('price')
     .optional()
     .trim()
-    .notEmpty()
     .withMessage('price is required')
     .isFloat({ min: 1 })
     .withMessage('price must be a positive number'),

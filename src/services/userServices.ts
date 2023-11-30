@@ -74,13 +74,12 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     const imag = file?.path
     const { firstName, lastName, userName, email, password, image } = req.body
     const user = {
-        firstName: firstName,
-        lastName: lastName,
-        userName: userName,
-        email: email,
-        password: password,
-        image: imag,
-    }
+        firstName,
+        lastName,
+        userName,
+        email,
+        password,
+    };
     await new Users(user).save()
 }
 

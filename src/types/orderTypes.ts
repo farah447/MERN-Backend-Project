@@ -5,10 +5,11 @@ import { IUser } from './userTypes'
 
 export interface IOrder extends Document {
   _id: string
-  user: IUser['_id']
+  buyer: IUser['_id']
   orderItems: IOrderItem[]
   amount: number
   totalProducts: number
+  status: 'Not Processed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled'
   createdAt?: Date
   updatedAt?: Date
   __v: number

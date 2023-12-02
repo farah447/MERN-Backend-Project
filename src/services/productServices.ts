@@ -5,7 +5,6 @@ import { Products } from '../models/productSchema'
 import { IProduct } from '../types/productTypes'
 import { createHttpError } from '../util/createHTTPError'
 
-
 export const findProductBySlug = async (slug: string): Promise<IProduct> => {
   const products = await Products.findOne({ slug: slug })
   if (!products) {
@@ -47,6 +46,7 @@ export const AllProducts = async (
   const products = await Products.find({
     $and: [{ price: { $gt: minPrice } }, { price: { $lt: maxPrice } }],
   })
+    .populate({ path: 'category', select: 'title' })
     .skip(skip)
     .limit(limit)
     .sort({ price: -1 })
@@ -59,9 +59,7 @@ export const AllProducts = async (
   }
 }
 
-
 export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
-
   const file = req.file
   const img = file?.path
   const { title, price, description, category, quantity, sold, shipping } = req.body
@@ -83,5 +81,5 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
     shipping: shipping,
   })
   await product.save()
-  return product;
+  return product
 }

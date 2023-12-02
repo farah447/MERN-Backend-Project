@@ -4,7 +4,7 @@ import { IOrder } from '../types/orderTypes'
 
 const orderSchema = new Schema(
   {
-    user: {
+    buyer: {
       type: Schema.Types.ObjectId,
       ref: 'Users',
       required: true,
@@ -27,6 +27,11 @@ const orderSchema = new Schema(
     totalProducts: {
       type: Number,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ['Not Processed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+      default: 'Not Processed',
     },
   },
   { timestamps: true }

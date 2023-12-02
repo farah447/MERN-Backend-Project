@@ -18,8 +18,8 @@ export const findAllOrders = async (page: number, limit: number) => {
   if (skip < 0) skip = 0
 
   const existingOrders: IOrder[] = await Order.find()
-    .populate('orderItems.product')
-    .populate('user')
+    .populate({ path: 'orderItems.product', select: 'title price shipping' })
+    .populate({ path: 'buyer', select: 'userName email ' })
     .skip(skip)
     .limit(limit)
 
@@ -34,21 +34,21 @@ export const findAllOrders = async (page: number, limit: number) => {
 }
 
 export const findOrderById = async (id: string): Promise<IOrder> => {
-  const order = await Order.findOne({ _id: id }).populate('orderItems.product').populate('user')
+  const order = await Order.findOne({ _id: id })
+    .populate({ path: 'orderItems.product', select: 'title price shipping' })
+    .populate({ path: 'buyer', select: 'userName email ' })
   if (!order) {
     throw createHttpError(404, `Order not found with this id: ${id}`)
   }
   return order
 }
 
-export const findOrdersByUserName = async (userName: string): Promise<IOrder[]> => {
-  const userExsist = await checkUserExistByUserName(userName)
-  const order = await Order.find({ user: userExsist })
-    .populate('orderItems.product')
-    .populate('user')
-
+export const findOrdersByUserId = async (userId: string): Promise<IOrder[]> => {
+  const order = await Order.find({ buyer: userId })
+    .populate({ path: 'orderItems.product', select: 'title price shipping' })
+    .populate({ path: 'buyer', select: 'userName email ' })
   if (order.length <= 0) {
-    throw createHttpError(404, `There are no orders for this user name: ${userName}`)
+    throw createHttpError(404, `There are no orders for this user ID: ${userId}`)
   }
   return order
 }

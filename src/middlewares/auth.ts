@@ -5,7 +5,7 @@ import { dev } from '../config'
 import { Users } from '../models/userSchema'
 import { createHttpError } from '../util/createHTTPError'
 
-interface CustomRequest extends Request {
+export interface CustomRequest extends Request {
   userId?: string
 }
 

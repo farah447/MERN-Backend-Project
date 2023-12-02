@@ -49,7 +49,7 @@ export const deleteCategories = async (req: Request, res: Response, next: NextFu
     if (!category) {
       throw createHttpError(404, 'Category is not found')
     }
-    res.status(201).send({ message: 'Delete category', payload: category })
+    res.status(200).send({ message: 'Delete category', payload: category })
   } catch (error) {
     next(error)
   }
@@ -69,7 +69,7 @@ export const updateCategory = async (req: Request, res: Response, next: NextFunc
     if (!category) {
       throw createHttpError(404, 'Category is not found')
     }
-    res.status(201).send({ message: 'Update single Category', payload: category })
+    res.status(200).send({ message: 'Update single Category', payload: category })
   } catch (error) {
     next(error)
   }

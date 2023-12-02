@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 
+import { CustomRequest } from '../middlewares/auth'
 import { Order } from '../models/orderSchema'
 import {
   checkUserExistById,
   findAllOrders,
   findOrderById,
-  findOrdersByUserName,
+  findOrdersByUserId,
   getOrderData,
   removeOrderById,
   updateStockAndSold,
@@ -47,10 +48,9 @@ export const getSingleOrderById = async (req: Request, res: Response, next: Next
   }
 }
 
-export const getUserOrdersByUserName = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserOrders = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
-    const userName = req.params.userName
-    const order = await findOrdersByUserName(String(userName))
+    const order = await findOrdersByUserId(String(req.userId))
 
     res.status(200).json({
       message: 'Orders returned',
@@ -75,16 +75,16 @@ export const deleteOrderById = async (req: Request, res: Response, next: NextFun
   }
 }
 
-export const placeNewOrder = async (req: Request, res: Response, next: NextFunction) => {
+export const placeNewOrder = async (req: CustomRequest, res: Response, next: NextFunction) => {
   try {
-    const { user, orderItems } = req.body
+    const { orderItems } = req.body
 
-    const userExsist = await checkUserExistById(user)
+    const userExsist = await checkUserExistById(String(req.userId))
 
     const { amount, totalProducts, updatedProducts } = await getOrderData(orderItems)
 
     const newOrder: IOrder = new Order({
-      user,
+      buyer: req.userId,
       orderItems,
       amount,
       totalProducts,
@@ -99,6 +99,20 @@ export const placeNewOrder = async (req: Request, res: Response, next: NextFunct
     res.status(201).json({
       message: 'Order placed successfully, and stock updated',
       payload: newOrder,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateOrderStatusById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id
+    const { status } = req.body
+    const updatedOrder = await Order.findOneAndUpdate({ _id: id }, { status }, { new: true })
+    res.status(200).json({
+      message: 'Order status updated successfully',
+      payload: updatedOrder,
     })
   } catch (error) {
     next(error)

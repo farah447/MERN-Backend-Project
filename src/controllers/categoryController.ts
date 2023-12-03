@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import slugify from 'slugify'
-import createHttpError from 'http-errors'
 
 import { Category } from '../models/categorySchema'
 import { getCategoryBySlugService } from '../services/categoryService'
+import { createHttpError } from '../util/createHTTPError'
 
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -37,7 +37,7 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
 export const getCategoryBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const category = await getCategoryBySlugService(req.params.slug)
-    res.send({ message: 'Get one Category', payload: category })
+    res.status(200).send({ message: 'Get one Category', payload: category })
   } catch (error) {
     next(error)
   }

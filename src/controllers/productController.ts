@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
-import { Error } from 'mongoose'
 import slugify from 'slugify'
 
 import { deleteImage } from '../helper/deleteImageHelper'
 import { Products } from '../models/productSchema'
-import { AllProducts, createProduct, findProductBySlug, removeProductBySlug } from '../services/productServices'
-import { IProduct } from '../types/productTypes'
+import {
+  AllProducts,
+  createProduct,
+  findProductBySlug,
+  removeProductBySlug,
+} from '../services/productServices'
 import { createHttpError } from '../util/createHTTPError'
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
@@ -43,11 +46,10 @@ export const getProductsBySlug = async (req: Request, res: Response, next: NextF
 
 export const createSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-
     const product = await createProduct(req, res, next)
     res.status(201).json({
       message: 'Single product created',
-      payload: product
+      payload: product,
     })
   } catch (error) {
     next(error)

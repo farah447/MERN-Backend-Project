@@ -12,7 +12,6 @@ export const validateCreateProduct = [
     .withMessage('Price is required')
     .isFloat({ min: 1 })
     .withMessage('Price must be a positive number greater than 0'),
-
 ]
 
 export const validateUpdateProduct: ValidationChain[] = [

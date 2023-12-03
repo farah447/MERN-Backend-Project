@@ -23,9 +23,7 @@ export const handleSendEmail = async (emailData: EmailDataType) => {
     }
 
     const info = await transporter.sendMail(mailOptions)
-    console.log('message esnt : ' + info.response)
   } catch (error) {
-    console.log('error encountered while sende email', error)
     throw error
   }
 }

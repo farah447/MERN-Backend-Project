@@ -30,7 +30,7 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
       sameSite: 'none',
     })
 
-    res.send({ message: 'User is logged in', payload: user })
+    res.status(200).send({ message: 'User is logged in', payload: user })
   } catch (error) {
     next(error)
   }
@@ -39,7 +39,7 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
 export const handleLogout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.clearCookie('access_token')
-    res.send({ message: 'User is logged out' })
+    res.status(200).send({ message: 'User is logged out' })
   } catch (error) {
     next(error)
   }

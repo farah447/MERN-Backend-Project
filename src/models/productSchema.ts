@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 
-import { IProduct } from '../types/productTypes'
 import { dev } from '../config'
+import { IProduct } from '../types/productTypes'
 
 const productSchema = new Schema(
   {
@@ -15,7 +15,7 @@ const productSchema = new Schema(
     },
     slug: {
       type: String,
-      unique: true, 
+      unique: true,
       lowercase: true,
     },
     price: {

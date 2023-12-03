@@ -4,7 +4,8 @@ export const dev = {
   app: {
     port: Number(process.env.PORT) || 3003,
     defaultUserImagePath: process.env.DEFAULT_USER_IMAGE_PATH || 'public/images/users/default.png',
-    defaultProductsImagePath: process.env.DEFAULT_PRODUCTS_IMAGE_PATH || 'public/images/products/default.png',
+    defaultProductsImagePath:
+      process.env.DEFAULT_PRODUCTS_IMAGE_PATH || 'public/images/products/default.png',
     jwtUserActivationKey: process.env.JWT_ACCOUNT_ACTIVATION_KEY || 'aaaa',
     jwtAccessKey: process.env.JWT_ACCESS_KEY || 'farah',
     stmpUsername: process.env.STMP_USERNAME || 'asmasaad3778@gmail.com',

@@ -27,8 +27,6 @@ router.delete('/:userName', isLoggedIn, isAdmin, deleteSingleUser)
 
 router.put('/:userName', updateSingleUser)
 
-router.post('/process-register', processRegisterUser)
-
 router.post('/activate', isLoggedOut, activateUser)
 
 router.put('/updateBan/:userName', updateBan)

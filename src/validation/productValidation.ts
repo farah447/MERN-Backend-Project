@@ -1,6 +1,6 @@
 import { check, ValidationChain } from 'express-validator'
 
-export const validateCreateProduct = [
+export const validateCreateProduct: ValidationChain[] = [
   check('title')
     .trim()
     .notEmpty()

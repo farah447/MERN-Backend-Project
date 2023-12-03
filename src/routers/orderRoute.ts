@@ -9,6 +9,8 @@ import {
   updateOrderStatusById,
 } from '../controllers/orderController'
 import { isAdmin, isLoggedIn } from '../middlewares/auth'
+import { runValidation } from '../validation'
+import { validatePlaceOrder } from '../validation/orderValidation'
 
 const ordersRouter = Router()
 
@@ -20,7 +22,7 @@ ordersRouter.get('/user', isLoggedIn, getUserOrders)
 
 ordersRouter.delete('/:id([0-9a-fA-F]{24})', isLoggedIn, isAdmin, deleteOrderById)
 
-ordersRouter.post('/', isLoggedIn, placeNewOrder)
+ordersRouter.post('/', validatePlaceOrder, runValidation, isLoggedIn, placeNewOrder)
 
 ordersRouter.put('/:id([0-9a-fA-F]{24})', isLoggedIn, isAdmin, updateOrderStatusById)
 

@@ -8,12 +8,14 @@ import {
   updateCategory,
 } from '../controllers/categoryController'
 import { isAdmin, isLoggedIn } from '../middlewares/auth'
+import { runValidation } from '../validation'
+import { validateCreateCategory } from '../validation/categoryValidation'
 
 const router = Router()
 
 router.get('/', getCategories)
 
-router.post('/', isLoggedIn, isAdmin, createCategories)
+router.post('/', validateCreateCategory, runValidation, isLoggedIn, isAdmin, createCategories)
 
 router.put('/:slug', isLoggedIn, isAdmin, updateCategory)
 

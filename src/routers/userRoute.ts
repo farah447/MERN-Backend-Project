@@ -12,16 +12,24 @@ import {
 } from '../controllers/userController'
 import { isAdmin, isLoggedIn, isLoggedOut } from '../middlewares/auth'
 import { uploadUser } from '../middlewares/uploadFile'
+import { runValidation } from '../validation'
+import { validateCreateUser } from '../validation/userValidation'
 
 const router = Router()
 
-router.post('/process-register', uploadUser.single('image'), isLoggedOut, processRegisterUser)
+router.post(
+  '/process-register',
+  validateCreateUser,
+  uploadUser.single('image'),
+  isLoggedOut,
+  processRegisterUser
+)
 
 router.get('/', isLoggedIn, isAdmin, getAllUsers)
 
 router.get('/:userName', isLoggedIn, getSingleUser)
 
-router.post('/', uploadUser.single('image'), createSingleUser)
+router.post('/', validateCreateUser, runValidation, uploadUser.single('image'), createSingleUser)
 
 router.delete('/:userName', isLoggedIn, isAdmin, deleteSingleUser)
 

@@ -1,5 +1,6 @@
 import cookieParser from 'cookie-parser'
 import express, { Application, Request, Response } from 'express'
+import cors from 'cors';
 
 import { dev } from '../src/config'
 import { connectDB } from '../src/config/db'
@@ -28,6 +29,7 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Health checkup' })
 })
 
+app.use(cors())
 app.use('/products', productRoute)
 app.use('/orders', ordersRouter)
 app.use('/categories', categoriesRouter)

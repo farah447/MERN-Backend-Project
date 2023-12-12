@@ -13,6 +13,6 @@ export const dev = {
     JWT_SECRET: process.env.JWT_SECRET || '',
   },
   db: {
-    url: process.env.MONGODB_URL || '',
+    url: process.env.MONGODB_URI || '',
   },
 }

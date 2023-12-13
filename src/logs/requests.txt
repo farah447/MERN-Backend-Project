@@ -27,7 +27,6 @@ Method: GET, Path: /, Date: 11/20/2023, Time: 5:27:14 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:34:00 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:35:59 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:40:25 PM
-Method: GET, Path: /favicon.ico, Date: 11/20/2023, Time: 5:40:25 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:41:38 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:41:48 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:41:51 PM
@@ -46,5 +45,4 @@ Method: GET, Path: /, Date: 11/20/2023, Time: 5:42:41 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:42:42 PM
 Method: GET, Path: /, Date: 11/20/2023, Time: 5:42:42 PM
 Method: GET, Path: /, Date: 11/21/2023, Time: 9:52:53 AM
-Method: GET, Path: /favicon.ico, Date: 11/21/2023, Time: 9:52:53 AM
 Method: GET, Path: /, Date: 11/21/2023, Time: 10:11:57 AM

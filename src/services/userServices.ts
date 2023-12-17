@@ -30,7 +30,7 @@ export const sendToken = async (req: Request, res: Response, next: NextFunction)
   const emailData = {
     email: email,
     subject: 'Activate Your Account',
-    html: `<h1>Hello ${firstName}</h1><p>Please activate your account by : <a href="http://localhost:3003/users/activate/${token}">click the following link</a></p>`,
+    html: `<h1>Hello ${firstName}</h1><p>Please activate your account by : <a href="http://localhost:3000/users/activate/${token}">click the following link</a></p>`,
   }
   await handleSendEmail(emailData)
 
@@ -38,7 +38,7 @@ export const sendToken = async (req: Request, res: Response, next: NextFunction)
 }
 
 export const userActivate = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.body.token
+  const { token } = req.body
 
   if (!token) {
     const error = createHttpError(404, 'please Provide a token link')

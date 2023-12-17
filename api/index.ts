@@ -29,7 +29,11 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Health checkup' })
 })
 
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}))
+app.use('/public', express.static('public'))
 app.use('/products', productRoute)
 app.use('/orders', ordersRouter)
 app.use('/categories', categoriesRouter)

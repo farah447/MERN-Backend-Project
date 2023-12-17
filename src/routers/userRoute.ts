@@ -4,6 +4,7 @@ import {
   activateUser,
   createSingleUser,
   deleteSingleUser,
+  forgetPassword,
   getAllUsers,
   getSingleUser,
   processRegisterUser,
@@ -38,5 +39,7 @@ router.put('/:userName', updateSingleUser)
 router.post('/activate', isLoggedOut, activateUser)
 
 router.put('/updateBan/:userName', updateBan)
+
+router.post('/forget-password', isLoggedOut, forgetPassword)
 
 export default router

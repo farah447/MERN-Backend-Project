@@ -30,13 +30,17 @@ export const AllProducts = async (
   maxPrice: number,
   search: string
 ) => {
+
+  let filter = {}
+  if (search) {
+    const regExpSearch = new RegExp('.*' + search + '.*', 'i')
+    filter = {
+      $or: [{ title: { $regex: regExpSearch } }, { description: { $regex: regExpSearch } }],
+    }
+  }
+
   const count = await Products.countDocuments()
   const totalPages = Math.ceil(count / limit)
-
-  const regExpSearch = new RegExp('.*' + search + '.*', 'i')
-  const filter = {
-    $or: [{ title: { $regex: regExpSearch } }, { description: { $regex: regExpSearch } }],
-  }
 
   if (page > totalPages) {
     page = totalPages

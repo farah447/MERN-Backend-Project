@@ -1,11 +1,12 @@
-import { NextFunction, Request, Response } from 'express'
-import jwt, { JsonWebTokenError, TokenExpiredError, JwtPayload } from 'jsonwebtoken'
-import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
+import { NextFunction, Request, Response } from 'express'
+import jwt, { JsonWebTokenError, JwtPayload, TokenExpiredError } from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
+import { dev } from '../config'
 import { deleteImage } from '../helper/deleteImageHelper'
-import { Users } from '../models/userSchema'
 import { createJsonWebToken } from '../helper/jwtHelper'
+import { Users } from '../models/userSchema'
 import {
   createUser,
   getUser,
@@ -15,7 +16,6 @@ import {
 } from '../services/userServices'
 import { UserInput } from '../types/userTypes'
 import { createHttpError } from '../util/createHTTPError'
-import { dev } from '../config'
 
 export const processRegisterUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -174,7 +174,7 @@ export const forgetPassword = async (req: Request, res: Response, next: NextFunc
     const { email } = req.body;
     const userName = req.params.userName;
 
-    const user = await Users.exists({ email: email })
+    const user = await Users.findOne({ email: email })
     if (!user) {
       const error = createHttpError(404, 'User not exists with this email. Please register first.')
       throw error
@@ -222,6 +222,24 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
 
     res.status(200).json({
       message: 'Reset password was successful',
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateUserProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userName, _id } = req.body;
+
+    const response = await Users.findOneAndUpdate(
+      _id,
+      { userName: userName },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: 'User name update was successful',
     })
   } catch (error) {
     next(error)

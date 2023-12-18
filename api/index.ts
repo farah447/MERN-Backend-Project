@@ -1,16 +1,16 @@
-import cookieParser from 'cookie-parser'
-import express, { Application, Request, Response } from 'express'
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import express, { Application, Request, Response } from 'express';
 
-import { dev } from '../src/config'
-import { connectDB } from '../src/config/db'
-import { errorHandler } from '../src/middlewares/errorHandler'
-import authRoute from '../src/routers/authRoute'
-import categoriesRouter from '../src/routers/categoryRoute'
-import ordersRouter from '../src/routers/orderRoute'
-import productRoute from '../src/routers/productRoute'
-import usersRouter from '../src/routers/userRoute'
-import { createHttpError } from '../src/util/createHTTPError'
+import { dev } from '../src/config';
+import { connectDB } from '../src/config/db';
+import { errorHandler } from '../src/middlewares/errorHandler';
+import authRoute from '../src/routers/authRoute';
+import categoriesRouter from '../src/routers/categoryRoute';
+import ordersRouter from '../src/routers/orderRoute';
+import productRoute from '../src/routers/productRoute';
+import usersRouter from '../src/routers/userRoute';
+import { createHttpError } from '../src/util/createHTTPError';
 
 const app: Application = express()
 

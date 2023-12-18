@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router } from 'express';
 
 import {
   activateUser,
@@ -11,11 +11,12 @@ import {
   resetPassword,
   updateBan,
   updateSingleUser,
-} from '../controllers/userController'
-import { isAdmin, isLoggedIn, isLoggedOut } from '../middlewares/auth'
-import { uploadUser } from '../middlewares/uploadFile'
-import { runValidation } from '../validation'
-import { validateCreateUser } from '../validation/userValidation'
+  updateUserProfile,
+} from '../controllers/userController';
+import { isAdmin, isLoggedIn, isLoggedOut } from '../middlewares/auth';
+import { uploadUser } from '../middlewares/uploadFile';
+import { runValidation } from '../validation';
+import { validateCreateUser } from '../validation/userValidation';
 
 const router = Router()
 
@@ -43,6 +44,8 @@ router.put('/updateBan/:userName', updateBan)
 
 router.post('/forget-password', isLoggedOut, forgetPassword)
 
-router.post('/reset-password', isLoggedOut, resetPassword)
+router.put('/reset-password', isLoggedOut, resetPassword)
+
+router.put('/:userName', updateUserProfile)
 
 export default router

@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
-import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+import jwt, { JsonWebTokenError, TokenExpiredError, JwtPayload } from 'jsonwebtoken'
 import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
 
 import { deleteImage } from '../helper/deleteImageHelper'
 import { Users } from '../models/userSchema'
+import { createJsonWebToken } from '../helper/jwtHelper'
 import {
   createUser,
   getUser,
@@ -170,27 +172,56 @@ export const updateSingleUser = async (req: Request, res: Response, next: NextFu
 export const forgetPassword = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email } = req.body;
+    const userName = req.params.userName;
+
     const user = await Users.exists({ email: email })
     if (!user) {
       const error = createHttpError(404, 'User not exists with this email. Please register first.')
       throw error
     }
 
-    const token = jwt.sign({ email }, dev.app.jwtUserActivationKey, {
-      expiresIn: '15m',
-    });
+    const token = createJsonWebToken({ email }, dev.app.jwtResetPasswordKey, '15m');
 
     const emailData = {
       email: email,
       subject: 'Reset Password',
       html: `
-      <h1>Hello ${name}</h1>
+      <h1>Hello ${userName}</h1>
       <p>please click here to: <a href="http://localhost:3000/users/activate/${token}">Reset passowrd</a></p>`
     }
 
     res.status(200).json({
       message: 'please check your email to reset password ',
       payload: token,
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token, password } = req.body;
+
+    const decoded = jwt.verify(token, dev.app.jwtResetPasswordKey) as JwtPayload;
+
+    if (!decoded) {
+      const error = createHttpError(400, 'Invalid token')
+      throw error
+    }
+
+    const updatedUser = await Users.findOneAndUpdate(
+      { email: decoded.email },
+      { $set: { password: bcrypt.hashSync(password, 10) } }
+    );
+
+    if (!updatedUser) {
+      const error = createHttpError(400, 'Reset password was Unsuccessful')
+      throw error
+    }
+
+    res.status(200).json({
+      message: 'Reset password was successful',
     })
   } catch (error) {
     next(error)

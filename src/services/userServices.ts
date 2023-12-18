@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 import { dev } from '../config'
 import { handleSendEmail } from '../helper/sendEmail'
 import { Users } from '../models/userSchema'
 import { IUser } from '../types/userTypes'
 import { createHttpError } from '../util/createHTTPError'
+import { createJsonWebToken } from '../helper/jwtHelper'
 
 export const sendToken = async (req: Request, res: Response, next: NextFunction) => {
   const { firstName, lastName, userName, email, password } = req.body
@@ -17,6 +19,7 @@ export const sendToken = async (req: Request, res: Response, next: NextFunction)
     throw error
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10)
   const tokenPayload = {
     firstName: firstName,
     lastName: lastName,
@@ -25,7 +28,7 @@ export const sendToken = async (req: Request, res: Response, next: NextFunction)
     password: password,
   }
 
-  const token = jwt.sign(tokenPayload, dev.app.jwtUserActivationKey, { expiresIn: '24h' })
+  const token = createJsonWebToken(tokenPayload, dev.app.jwtUserActivationKey, '24h')
 
   const emailData = {
     email: email,

@@ -8,6 +8,7 @@ import {
   getAllUsers,
   getSingleUser,
   processRegisterUser,
+  resetPassword,
   updateBan,
   updateSingleUser,
 } from '../controllers/userController'
@@ -41,5 +42,7 @@ router.post('/activate', isLoggedOut, activateUser)
 router.put('/updateBan/:userName', updateBan)
 
 router.post('/forget-password', isLoggedOut, forgetPassword)
+
+router.post('/reset-password', isLoggedOut, resetPassword)
 
 export default router

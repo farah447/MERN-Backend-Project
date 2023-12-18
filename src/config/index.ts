@@ -7,6 +7,7 @@ export const dev = {
     defaultProductsImagePath:
       process.env.DEFAULT_PRODUCTS_IMAGE_PATH || '',
     jwtUserActivationKey: process.env.JWT_ACCOUNT_ACTIVATION_KEY || '',
+    jwtResetPasswordKey: process.env.JWT_RESET_PASSWORD_KEY || '',
     jwtAccessKey: process.env.JWT_ACCESS_KEY || '',
     stmpUsername: process.env.STMP_USERNAME || '',
     stmpPassword: process.env.STMP_PASSWORD || '',

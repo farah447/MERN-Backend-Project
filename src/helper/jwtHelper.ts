@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 export const createJsonWebToken = (tokenPayload: object, secretKey: string, expiresIn = '') => {
     try {
-        if (tokenPayload) {
+        if (!tokenPayload) {
             throw new Error('tokenPayload must be non-empty object');
         }
         if (secretKey === '') {

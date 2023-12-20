@@ -21,6 +21,11 @@ connectDB()
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`)
 })
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}))
+
 app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -29,10 +34,6 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Health checkup' })
 })
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-}))
 app.use('/public', express.static('public'))
 app.use('/products', productRoute)
 app.use('/orders', ordersRouter)

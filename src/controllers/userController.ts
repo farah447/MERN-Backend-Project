@@ -68,7 +68,7 @@ export const updateBan = async (req: Request, res: Response, next: NextFunction)
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let page = Number(req.query.page) || 1
-    const limit = Number(req.query.limit) || 3
+    const limit = Number(req.query.limit) || 10
     let search = req.query.search as string
     let filter = {}
     if (search) {
@@ -172,6 +172,7 @@ export const updateSingleUser = async (req: Request, res: Response, next: NextFu
 export const forgetPassword = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email } = req.body;
+    console.log(email); // Check if the email is correctly received by the backend
     const userName = req.params.userName;
 
     const user = await Users.findOne({ email: email })

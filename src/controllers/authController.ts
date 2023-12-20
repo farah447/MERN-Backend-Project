@@ -28,6 +28,7 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
       maxAge: 15 * 60 * 1000, //15 minutes
       httpOnly: true,
       sameSite: 'none',
+      secure: true
     })
 
     res.status(200).send({ message: 'User is logged in', payload: user })

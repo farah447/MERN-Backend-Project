@@ -10,6 +10,7 @@ import {
   processRegisterUser,
   resetPassword,
   updateBan,
+  updateRole,
   updateSingleUser,
   updateUserProfile,
 } from '../controllers/userController';
@@ -51,7 +52,7 @@ router.post(
   '/process-register',
   //validateCreateUser,
   uploadUser.single('image'),
-  //isLoggedOut,
+  // isLoggedOut,
   processRegisterUser
 )
 
@@ -81,7 +82,15 @@ router.post('/activate',
   //isLoggedOut, 
   activateUser)
 
-router.put('/updateBan/:userName', updateBan)
+router.put('/updateBan/:userName',
+  //isLoggedIn, 
+  //isAdmin, 
+  updateBan)
+
+router.put('/role/:userName',
+  //isLoggedIn, 
+  //isAdmin, 
+  updateRole)
 
 router.post('/forget-password',
   //isLoggedOut, 

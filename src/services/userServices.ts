@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 import { dev } from '../config'
@@ -8,9 +8,18 @@ import { Users } from '../models/userSchema'
 import { IUser } from '../types/userTypes'
 import { createHttpError } from '../util/createHTTPError'
 import { createJsonWebToken } from '../helper/jwtHelper'
+// import { v2 as cloudinary } from 'cloudinary';
+// import { uploadToCloudinary } from '../helper/cloudinaryHelper'
+
+// cloudinary.config({
+//   cloud_name: dev.cloud.cloudinaryName,
+//   api_key: dev.cloud.cloudinaryAPIKey,
+//   api_secret: dev.cloud.cloudinaryAPISecretKey
+// });
+
 
 export const sendToken = async (req: Request, res: Response, next: NextFunction) => {
-  const { firstName, lastName, userName, email, password } = req.body
+  const { firstName, lastName, userName, email, password, image } = req.body
 
   const isUserExists = await Users.exists({ email: email })
 
@@ -26,6 +35,7 @@ export const sendToken = async (req: Request, res: Response, next: NextFunction)
     userName: userName,
     email: email,
     password: password,
+    image: image
   }
 
   const token = createJsonWebToken(tokenPayload, dev.app.jwtUserActivationKey, '24h')
@@ -49,11 +59,23 @@ export const userActivate = async (req: Request, res: Response, next: NextFuncti
   }
 
   const decoded = jwt.verify(token, dev.app.jwtUserActivationKey)
+  // as JwtPayload
 
   if (!decoded) {
     const error = createHttpError(404, 'The Token link is Invalid ')
     throw error
   }
+
+  // // to upload an image to Cloudinary and get the Cloudinary URL
+  // const cloudinaryUrl = await uploadToCloudinary(
+  //   decoded.image,
+  //   'sda-ecommerce/users'
+  // );
+  // // adding the cloudinary url to
+  // decoded.image = cloudinaryUrl;
+  // console.log(decoded)
+
+  // storing the user in the database
   await Users.create(decoded)
 }
 
@@ -106,6 +128,18 @@ export const updateBanStatusByUserName = async (
 ): Promise<IUser | null> => {
   const update = { isBanned: !isBanned }
   const user = await Users.findOneAndUpdate({ userName: userName }, update, { new: true })
+
+  if (!user) {
+    const error = createHttpError(404, 'The User not found')
+    throw error
+  }
+  return user
+}
+
+export const updateRoleByUserName = async (
+  userName: string) => {
+
+  const user = await Users.findOneAndUpdate({ userName: userName }, { isAdmin: true })
 
   if (!user) {
     const error = createHttpError(404, 'The User not found')

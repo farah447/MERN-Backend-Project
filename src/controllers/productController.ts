@@ -47,6 +47,7 @@ export const getProductsBySlug = async (req: Request, res: Response, next: NextF
 export const createSingleProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const product = await createProduct(req, res, next)
+    console.log('created in here')
     res.status(201).json({
       message: 'Single product created',
       payload: product,
@@ -73,12 +74,16 @@ export const deleteProductBySlug = async (req: Request, res: Response, next: Nex
 
 export const updateProductBySlug = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.body.title) {
-      req.body.slug = slugify(req.body.title)
-    }
-    const product = await Products.findOneAndUpdate({ slug: req.params.slug }, req.body, {
-      new: true,
+    const { slug } = req.params
+    const productExist = await Products.findOne({
+      slug: slugify(req.body.title)
     })
+    if (productExist) {
+      const error = createHttpError(404, 'Product not found with this slug')
+      throw error
+    }
+    const product = await Products.findOne({ slug: slug })
+
     if (!product) {
       const error = createHttpError(404, 'Product not found with this slug')
       throw error

@@ -4,6 +4,15 @@ import slugify from 'slugify'
 import { Products } from '../models/productSchema'
 import { IProduct } from '../types/productTypes'
 import { createHttpError } from '../util/createHTTPError'
+import { v2 as cloudinary } from 'cloudinary';
+import { uploadToCloudinary } from '../helper/cloudinaryHelper'
+import { dev } from '../config'
+
+cloudinary.config({
+  cloud_name: dev.cloud.cloudinaryName,
+  api_key: dev.cloud.cloudinaryAPIKey,
+  api_secret: dev.cloud.cloudinaryAPISecretKey
+});
 
 export const findProductBySlug = async (slug: string): Promise<IProduct> => {
   const products = await Products.findOne({ slug: slug })
@@ -53,7 +62,7 @@ export const AllProducts = async (
     .populate({ path: 'category', select: 'title' })
     .skip(skip)
     .limit(limit)
-    .sort({ price: -1 })
+    // .sort({ price: -1 })
     .find(filter)
 
   return {
@@ -84,6 +93,15 @@ export const createProduct = async (req: Request, res: Response, next: NextFunct
     sold: sold,
     shipping: shipping,
   })
+
+  const cloudinaryUrl = await uploadToCloudinary(
+    product.image,
+    'sda-ecommerce/products'
+  );
+
+  // adding the cloudinary url to
+  product.image = cloudinaryUrl;
+
   await product.save()
   return product
 }

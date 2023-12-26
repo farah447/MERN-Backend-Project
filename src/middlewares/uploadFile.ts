@@ -2,18 +2,18 @@ import { Request } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 
 const ProductStorage = multer.diskStorage({
-  destination: function (req: Request, file: Express.Multer.File, cb) {
-    cb(null, 'public/images/products')
-  },
+  // destination: function (req: Request, file: Express.Multer.File, cb) {
+  //   cb(null, 'public/images/products')
+  // },
   filename: function (req: Request, file: Express.Multer.File, cb) {
     cb(null, Date.now() + '-' + file.originalname)
   },
 })
 
 const userStorage = multer.diskStorage({
-  destination: function (req: Request, file: Express.Multer.File, cb) {
-    cb(null, 'public/images/users')
-  },
+  // destination: function (req: Request, file: Express.Multer.File, cb) {
+  //   cb(null, 'public/images/users')
+  // },
   filename: function (req: Request, file: Express.Multer.File, cb) {
     cb(null, Date.now() + '-' + file.originalname)
   },

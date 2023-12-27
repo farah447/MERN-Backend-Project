@@ -28,7 +28,7 @@ export const createCategories = async (req: Request, res: Response, next: NextFu
     })
 
     await newCategory.save()
-    res.status(201).send({ message: 'The Category is created' })
+    res.status(201).send({ message: 'The Category is created', payload: newCategory })
   } catch (error) {
     next(error)
   }

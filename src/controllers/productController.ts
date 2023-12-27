@@ -14,12 +14,24 @@ import { createHttpError } from '../util/createHTTPError'
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let page = Number(req.query.page) || 1
-    const limit = Number(req.query.limit) || 3
+    const limit = Number(req.query.limit) || 20
     let minPrice = Number(req.query.minPrice) || 0
     let maxPrice = Number(req.query.maxPrice) || 50000
     let search = req.query.search as string
 
     const result = await AllProducts(page, limit, minPrice, maxPrice, search)
+    // const { products, pagination } = await AllProducts(
+    //   page,
+    //   limit,
+    //   maxPrice,
+    //   minPrice,
+    //   search,
+    // )
+    // payload: {
+    //   products,
+    //   pagination,
+    //   searchBy,
+    // },
 
     res.status(200).json({
       message: 'All products are returned',
@@ -78,7 +90,7 @@ export const updateProductBySlug = async (req: Request, res: Response, next: Nex
     const productExist = await Products.findOne({
       slug: slugify(req.body.title)
     })
-    if (productExist) {
+    if (!productExist) {
       const error = createHttpError(404, 'Product not found with this slug')
       throw error
     }
